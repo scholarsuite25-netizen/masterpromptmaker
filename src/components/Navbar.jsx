@@ -2,6 +2,27 @@ import React from 'react';
 import { Sparkles, ShoppingBag, BookOpen, Layers, Bookmark, Sun, Moon, MessageSquare, Zap, SlidersHorizontal, Mic } from 'lucide-react';
 
 export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme }) {
+  const scrollTo = (targetId, tab) => {
+    if (setActiveTab) setActiveTab(tab);
+    if (targetId === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const element = document.getElementById(targetId);
+    if (element) {
+      const navOffset = 88;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = Math.max(0, elementPosition - navOffset);
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <header className="glass-panel" style={{
       position: 'sticky',
@@ -25,7 +46,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
       }}>
         {/* Brand Logo */}
         <div 
-          onClick={() => setActiveTab('optimizer')}
+          onClick={() => scrollTo('top', 'optimizer')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -89,7 +110,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           flexWrap: 'wrap'
         }}>
           <button
-            onClick={() => setActiveTab('optimizer')}
+            onClick={() => scrollTo('optimizer-workbench', 'optimizer')}
             className="btn"
             style={{
               padding: '8px 13px',
@@ -105,7 +126,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </button>
 
           <button
-            onClick={() => setActiveTab('factory')}
+            onClick={() => scrollTo('content-factory-studio', 'factory')}
             className="btn"
             style={{
               padding: '8px 13px',
@@ -133,7 +154,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </button>
 
           <button
-            onClick={() => setActiveTab('templates')}
+            onClick={() => scrollTo('templates-gallery', 'templates')}
             className="btn"
             style={{
               padding: '8px 13px',
@@ -149,7 +170,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </button>
 
           <button
-            onClick={() => setActiveTab('shop')}
+            onClick={() => scrollTo('digital-shop', 'shop')}
             className="btn"
             style={{
               padding: '8px 13px',
@@ -176,7 +197,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </button>
 
           <button
-            onClick={() => setActiveTab('speaking')}
+            onClick={() => scrollTo('speaking-inquiry', 'speaking')}
             className="btn"
             style={{
               padding: '8px 13px',
@@ -192,7 +213,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </button>
 
           <button
-            onClick={() => setActiveTab('library')}
+            onClick={() => scrollTo('prompt-library', 'library')}
             className="btn"
             style={{
               padding: '8px 13px',

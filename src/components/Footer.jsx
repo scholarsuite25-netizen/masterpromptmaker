@@ -1,7 +1,15 @@
 import React from 'react';
 import { Sparkles, MessageSquare, Building2, ShieldCheck, Heart } from 'lucide-react';
 
-export function Footer({ setActiveTab }) {
+export function Footer({ setActiveTab, scrollToSection }) {
+  const handleNav = (id, tab) => {
+    if (scrollToSection) {
+      scrollToSection(id, tab);
+    } else if (setActiveTab) {
+      setActiveTab(tab);
+    }
+  };
+
   return (
     <footer style={{
       borderTop: '1px solid var(--border-subtle)',
@@ -86,7 +94,7 @@ export function Footer({ setActiveTab }) {
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
             <li>
               <button 
-                onClick={() => setActiveTab('optimizer')}
+                onClick={() => handleNav('optimizer-workbench', 'optimizer')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
                 AI Prompt Studio (Free)
@@ -94,7 +102,7 @@ export function Footer({ setActiveTab }) {
             </li>
             <li>
               <button 
-                onClick={() => setActiveTab('factory')}
+                onClick={() => handleNav('content-factory-studio', 'factory')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
               >
                 Content Factory Studio (30 Modes)
@@ -102,7 +110,7 @@ export function Footer({ setActiveTab }) {
             </li>
             <li>
               <button 
-                onClick={() => setActiveTab('templates')}
+                onClick={() => handleNav('templates-gallery', 'templates')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
                 Free Prompt Templates
@@ -110,7 +118,7 @@ export function Footer({ setActiveTab }) {
             </li>
             <li>
               <button 
-                onClick={() => setActiveTab('shop')}
+                onClick={() => handleNav('digital-shop', 'shop')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
                 Special Shop & eBooks
@@ -118,7 +126,7 @@ export function Footer({ setActiveTab }) {
             </li>
             <li>
               <button 
-                onClick={() => setActiveTab('speaking')}
+                onClick={() => handleNav('speaking-inquiry', 'speaking')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--red-light)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
               >
                 Invite S. B. Omotoso (Keynote)
@@ -126,7 +134,7 @@ export function Footer({ setActiveTab }) {
             </li>
             <li>
               <button 
-                onClick={() => setActiveTab('library')}
+                onClick={() => handleNav('prompt-library', 'library')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
                 My Saved Prompts & Purchases

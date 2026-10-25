@@ -14,7 +14,6 @@ export function SpeakingInquiry({ onNotify }) {
   const [eventDate, setEventDate] = useState("");
   const [location, setLocation] = useState("");
   const [audienceSize, setAudienceSize] = useState("");
-  const [budget, setBudget] = useState("");
   const [themeContext, setThemeContext] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
@@ -43,8 +42,7 @@ export function SpeakingInquiry({ onNotify }) {
     message += `🎙️ *Engagement Format:* ${engagementFormat}\n`;
     message += `📅 *Target Date:* ${eventDate || "TBD"}\n`;
     message += `📍 *Location:* ${location || "TBD"}\n`;
-    message += `👥 *Estimated Audience:* ${audienceSize || "TBD"}\n`;
-    message += `💰 *Budget/Honorarium:* ${budget || "Negotiable"}\n\n`;
+    message += `👥 *Estimated Audience:* ${audienceSize || "TBD"}\n\n`;
     message += `🎯 *Event Theme & Objectives:*\n${themeContext || "Discuss strategic keynote topic."}\n\n`;
     message += `Please confirm availability for expedited scheduling!`;
 
@@ -72,7 +70,6 @@ export function SpeakingInquiry({ onNotify }) {
     setEventDate("");
     setLocation("");
     setAudienceSize("");
-    setBudget("");
     setThemeContext("");
   };
 
@@ -316,40 +313,19 @@ export function SpeakingInquiry({ onNotify }) {
               </div>
             </div>
 
-            {/* Row 4: Audience Size & Budget */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '18px',
-              marginBottom: '18px'
-            }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
-                  ESTIMATED IN-PERSON / VIRTUAL AUDIENCE
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. 500 – 1,000 attendees"
-                  value={audienceSize}
-                  onChange={(e) => setAudienceSize(e.target.value)}
-                  className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
-                  ESTIMATED SPEAKER BUDGET / HONORARIUM
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. ₦1.5M – ₦3M or $3,000 – $5,000"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
-                  className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
-                />
-              </div>
+            {/* Row 4: Audience Size */}
+            <div style={{ marginBottom: '18px' }}>
+              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
+                ESTIMATED IN-PERSON / VIRTUAL AUDIENCE
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. 500 – 1,000 attendees"
+                value={audienceSize}
+                onChange={(e) => setAudienceSize(e.target.value)}
+                className="input-field"
+                style={{ fontSize: '0.9rem', padding: '12px 14px', width: '100%' }}
+              />
             </div>
 
             {/* Row 5: Theme & Objectives Textarea */}

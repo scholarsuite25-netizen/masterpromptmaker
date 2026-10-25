@@ -103,6 +103,42 @@ Output: Under 90 words per email, no pleasantry fluff.`
     localStorage.setItem('po_unlocked_products', JSON.stringify(unlockedProducts));
   }, [unlockedProducts]);
 
+  // Active section tracking on scroll
+  useEffect(() => {
+    const sectionMap = [
+      { id: 'optimizer-workbench', tab: 'optimizer' },
+      { id: 'content-factory-studio', tab: 'factory' },
+      { id: 'templates-gallery', tab: 'templates' },
+      { id: 'digital-shop', tab: 'shop' },
+      { id: 'speaking-inquiry', tab: 'speaking' },
+      { id: 'prompt-library', tab: 'library' }
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const match = sectionMap.find(s => s.id === entry.target.id);
+            if (match) {
+              setActiveTab(match.tab);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '-10% 0px -60% 0px',
+        threshold: 0.1
+      }
+    );
+
+    sectionMap.forEach((s) => {
+      const el = document.getElementById(s.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
@@ -179,13 +215,33 @@ Output: Under 90 words per email, no pleasantry fluff.`
     notify("Prompt removed from library", "red");
   };
 
+  // Smooth scroll helper
+  const scrollToSection = (sectionId, tabName) => {
+    if (tabName) setActiveTab(tabName);
+    if (sectionId === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const navOffset = 88;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = Math.max(0, elementPosition - navOffset);
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   // Select template to load into workbench
   const handleSelectTemplate = (template) => {
     setActiveTab('optimizer');
     notify(`Loaded template: "${template.title}" into Optimizer!`, "success");
-    // Scroll smoothly to workbench
-    const el = document.getElementById('optimizer-workbench');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    scrollToSection('optimizer-workbench', 'optimizer');
   };
 
   const cartCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -214,72 +270,51 @@ Output: Under 90 words per email, no pleasantry fluff.`
       <main className="app-container" style={{ flex: 1 }}>
         {/* Hero Section */}
         <Hero
-          onStartOptimizing={() => {
-            setActiveTab('optimizer');
-            const el = document.getElementById('optimizer-workbench');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onExploreShop={() => {
-            setActiveTab('shop');
-            const el = document.getElementById('digital-shop');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          onOpenFactory={() => {
-            setActiveTab('factory');
-            window.scrollTo({ top: 380, behavior: 'smooth' });
-          }}
-          onOpenSpeaking={() => {
-            setActiveTab('speaking');
-            window.scrollTo({ top: 380, behavior: 'smooth' });
-          }}
+          onStartOptimizing={() => scrollToSection('optimizer-workbench', 'optimizer')}
+          onExploreShop={() => scrollToSection('digital-shop', 'shop')}
+          onOpenFactory={() => scrollToSection('content-factory-studio', 'factory')}
+          onOpenSpeaking={() => scrollToSection('speaking-inquiry', 'speaking')}
         />
 
-        {/* Dynamic Tab Views */}
-        {activeTab === 'optimizer' && (
-          <PromptWorkbench
-            onSavePrompt={handleSavePrompt}
-            onNotify={notify}
-          />
-        )}
+        {/* 1. AI Prompt Engineering Workbench */}
+        <PromptWorkbench
+          onSavePrompt={handleSavePrompt}
+          onNotify={notify}
+        />
 
-        {activeTab === 'factory' && (
-          <ContentFactoryStudio
-            onNotify={notify}
-          />
-        )}
+        {/* 2. Autonomous 30-Mode Digital Content Factory */}
+        <ContentFactoryStudio
+          onNotify={notify}
+        />
 
-        {activeTab === 'templates' && (
-          <TemplatesGallery
-            onSelectTemplate={handleSelectTemplate}
-            onNotify={notify}
-          />
-        )}
+        {/* 3. Prompt Templates Gallery */}
+        <TemplatesGallery
+          onSelectTemplate={handleSelectTemplate}
+          onNotify={notify}
+        />
 
-        {activeTab === 'shop' && (
-          <DigitalShop
-            onAddToCart={handleAddToCart}
-            onOpenPreview={(product) => setPreviewProduct(product)}
-            onDirectBuy={handleDirectBuy}
-            currency={currency}
-            setCurrency={setCurrency}
-            onNotify={notify}
-          />
-        )}
+        {/* 4. Digital Creator Shop & Marketplace */}
+        <DigitalShop
+          onAddToCart={handleAddToCart}
+          onOpenPreview={(product) => setPreviewProduct(product)}
+          onDirectBuy={handleDirectBuy}
+          currency={currency}
+          setCurrency={setCurrency}
+          onNotify={notify}
+        />
 
-        {activeTab === 'speaking' && (
-          <SpeakingInquiry
-            onNotify={notify}
-          />
-        )}
+        {/* 5. Keynote Speaking & Executive Workshop Inquiry */}
+        <SpeakingInquiry
+          onNotify={notify}
+        />
 
-        {activeTab === 'library' && (
-          <PromptLibrary
-            savedPrompts={savedPrompts}
-            unlockedProducts={unlockedProducts}
-            onDeletePrompt={handleDeletePrompt}
-            onNotify={notify}
-          />
-        )}
+        {/* 6. Saved Prompts & Unlocked Digital Library */}
+        <PromptLibrary
+          savedPrompts={savedPrompts}
+          unlockedProducts={unlockedProducts}
+          onDeletePrompt={handleDeletePrompt}
+          onNotify={notify}
+        />
       </main>
 
       {/* Floating 24/7 WhatsApp Quick Help & Feedback Widget (Bottom Left) */}
@@ -372,7 +407,7 @@ Output: Under 90 words per email, no pleasantry fluff.`
       </div>
 
       {/* Global Footer */}
-      <Footer setActiveTab={setActiveTab} />
+      <Footer setActiveTab={setActiveTab} scrollToSection={scrollToSection} />
     </div>
   );
 }

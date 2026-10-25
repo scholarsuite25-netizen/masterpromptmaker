@@ -170,7 +170,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
               <title>Master Prompt Studio Export - ${escapeHtml(selectedModel.toUpperCase())}</title>
               <style>
                 body {
-                  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
                   max-width: 800px;
                   margin: 40px auto;
                   padding: 20px;
