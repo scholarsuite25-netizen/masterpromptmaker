@@ -77,17 +77,12 @@ export function SpeakingInquiry({ onNotify }) {
     <section id="speaking-inquiry" style={{ marginBottom: '80px' }}>
       {/* Speaker Showcase Profile */}
       <div className="glass-panel" style={{
-        padding: '32px',
+        padding: 'clamp(16px, 4vw, 32px)',
         marginBottom: '32px',
         background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%)',
         border: '1px solid var(--border-blue)'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '24px',
-          alignItems: 'center'
-        }}>
+        <div className="responsive-two-col" style={{ alignItems: 'center' }}>
           <div>
             <div style={{
               display: 'inline-flex',
@@ -105,7 +100,7 @@ export function SpeakingInquiry({ onNotify }) {
               </span>
             </div>
 
-            <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '8px' }}>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 5vw, 2.2rem)', fontWeight: 800, marginBottom: '8px' }}>
               S. B. <span className="gradient-text-red-blue">Omotoso</span>
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '16px' }}>
@@ -156,7 +151,7 @@ export function SpeakingInquiry({ onNotify }) {
       <div className="glass-panel" style={{
         maxWidth: '820px',
         margin: '0 auto',
-        padding: '36px',
+        padding: 'clamp(18px, 4vw, 36px)',
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border-glass)',
         boxShadow: 'var(--shadow-lg)',
@@ -185,12 +180,7 @@ export function SpeakingInquiry({ onNotify }) {
         {!submitted ? (
           <form onSubmit={handleSubmit}>
             {/* Row 1: Full Name & Organization */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '18px',
-              marginBottom: '18px'
-            }}>
+            <div className="responsive-two-col" style={{ marginBottom: '18px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
                   YOUR FULL NAME *
@@ -223,12 +213,7 @@ export function SpeakingInquiry({ onNotify }) {
             </div>
 
             {/* Row 2: Corporate Email & Phone/WhatsApp */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '18px',
-              marginBottom: '18px'
-            }}>
+            <div className="responsive-two-col" style={{ marginBottom: '18px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
                   CORPORATE EMAIL ADDRESS *
@@ -262,7 +247,7 @@ export function SpeakingInquiry({ onNotify }) {
             {/* Row 3: Engagement Format, Date, Location */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))',
               gap: '18px',
               marginBottom: '18px'
             }}>

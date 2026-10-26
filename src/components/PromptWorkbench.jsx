@@ -480,12 +480,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
       )}
 
       {/* Main Dual-Panel Workbench */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-        gap: '24px',
-        alignItems: 'start'
-      }}>
+      <div className="responsive-workbench-grid">
         {/* LEFT COLUMN: Input & Framework Controls */}
         <div className="glass-panel" style={{ padding: '24px' }}>
           <div style={{
@@ -589,7 +584,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
               </label>
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 135px), 1fr))',
                 gap: '8px'
               }}>
                 {FRAMEWORK_OPTIONS.map((fw) => (

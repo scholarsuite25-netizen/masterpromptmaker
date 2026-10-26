@@ -42,7 +42,7 @@ export function CartDrawer({
           boxShadow: 'var(--shadow-lg)',
           display: 'flex',
           flexDirection: 'column',
-          padding: '24px',
+          padding: 'clamp(16px, 4vw, 24px)',
           position: 'relative',
           borderRadius: 0
         }}

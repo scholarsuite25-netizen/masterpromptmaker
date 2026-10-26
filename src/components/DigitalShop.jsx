@@ -95,7 +95,7 @@ export function DigitalShop({
         gap: '16px'
       }}>
         {/* Category Filter Pills */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="scroll-pills-row" style={{ width: '100%', marginBottom: '4px' }}>
           {shopCategories.map((cat) => (
             <button
               key={cat}
@@ -108,7 +108,9 @@ export function DigitalShop({
                 background: selectedCategory === cat ? 'var(--gradient-brand)' : 'var(--bg-surface-elevated)',
                 color: selectedCategory === cat ? '#ffffff' : 'var(--text-secondary)',
                 border: `1px solid ${selectedCategory === cat ? 'transparent' : 'var(--border-subtle)'}`,
-                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-dual)' : 'none'
+                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-dual)' : 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
             >
               {cat}
@@ -117,14 +119,15 @@ export function DigitalShop({
         </div>
 
         {/* Currency Switcher & Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', width: '100%' }}>
           {/* Currency Toggle */}
           <div style={{
             display: 'flex',
             background: 'var(--bg-surface-elevated)',
             padding: '3px',
             borderRadius: '8px',
-            border: '1px solid var(--border-subtle)'
+            border: '1px solid var(--border-subtle)',
+            flexShrink: 0
           }}>
             <button
               onClick={() => setCurrency('NGN')}
@@ -159,7 +162,7 @@ export function DigitalShop({
           </div>
 
           {/* Search Box */}
-          <div style={{ position: 'relative', minWidth: '220px' }}>
+          <div className="search-bar-wrap" style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
             <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
@@ -171,7 +174,8 @@ export function DigitalShop({
                 paddingLeft: '36px',
                 fontSize: '0.85rem',
                 paddingTop: '8px',
-                paddingBottom: '8px'
+                paddingBottom: '8px',
+                width: '100%'
               }}
             />
           </div>
@@ -179,11 +183,7 @@ export function DigitalShop({
       </div>
 
       {/* Products Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-        gap: '24px'
-      }}>
+      <div className="responsive-cards-grid">
         {filteredProducts.map((product) => {
           const priceDisplay = currency === 'NGN' 
             ? `₦${product.priceNGN.toLocaleString()}` 

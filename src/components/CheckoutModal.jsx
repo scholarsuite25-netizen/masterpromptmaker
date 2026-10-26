@@ -139,7 +139,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: '12px'
     }}>
       <div className="glass-panel" style={{
         maxWidth: '720px',
@@ -149,7 +149,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
         borderRadius: 'var(--radius-lg)',
         border: `1px solid ${isUnlocked ? '#10b981' : 'var(--border-red)'}`,
         boxShadow: isUnlocked ? '0 0 35px rgba(16, 185, 129, 0.3)' : 'var(--shadow-glow-dual)',
-        padding: '28px',
+        padding: 'clamp(14px, 4vw, 28px)',
         position: 'relative',
         background: 'var(--bg-surface)'
       }}>

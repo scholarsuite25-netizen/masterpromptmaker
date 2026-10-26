@@ -160,7 +160,7 @@ export function PromptLibrary({
         gap: '14px'
       }}>
         {/* Search Input */}
-        <div style={{ position: 'relative', flex: 1, minWidth: '260px' }}>
+        <div className="search-bar-wrap" style={{ position: 'relative', flex: 1, minWidth: '180px', width: '100%' }}>
           <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -207,11 +207,7 @@ export function PromptLibrary({
             </p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
-            gap: '20px'
-          }}>
+          <div className="responsive-cards-grid">
             {filteredPrompts.map((item) => (
               <div
                 key={item.id}
@@ -320,11 +316,7 @@ export function PromptLibrary({
             </p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
-            gap: '20px'
-          }}>
+          <div className="responsive-cards-grid">
             {filteredPurchased.map((product) => (
               <div
                 key={product.id}

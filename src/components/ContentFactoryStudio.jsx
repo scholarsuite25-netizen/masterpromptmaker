@@ -150,7 +150,7 @@ export function ContentFactoryStudio({ onNotify }) {
         gap: '14px'
       }}>
         {/* Category Pills */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="scroll-pills-row" style={{ width: '100%', marginBottom: '4px' }}>
           {FACTORY_CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -163,7 +163,9 @@ export function ContentFactoryStudio({ onNotify }) {
                 background: selectedCategory === cat ? 'var(--gradient-brand)' : 'var(--bg-surface-elevated)',
                 color: selectedCategory === cat ? '#ffffff' : 'var(--text-secondary)',
                 border: `1px solid ${selectedCategory === cat ? 'transparent' : 'var(--border-subtle)'}`,
-                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-dual)' : 'none'
+                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-dual)' : 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
             >
               {cat}
@@ -172,7 +174,7 @@ export function ContentFactoryStudio({ onNotify }) {
         </div>
 
         {/* Search */}
-        <div style={{ position: 'relative', minWidth: '240px' }}>
+        <div className="search-bar-wrap" style={{ position: 'relative', width: '100%' }}>
           <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -184,21 +186,17 @@ export function ContentFactoryStudio({ onNotify }) {
               paddingLeft: '36px',
               fontSize: '0.85rem',
               paddingTop: '8px',
-              paddingBottom: '8px'
+              paddingBottom: '8px',
+              width: '100%'
             }}
           />
         </div>
       </div>
 
       {/* Main Studio Grid: Mode Selector, Guided Intake, and Interactive Viewer */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '320px 1fr',
-        gap: '24px',
-        alignItems: 'start'
-      }}>
+      <div className="responsive-factory-grid">
         {/* Left Column: Scrollable Mode List */}
-        <div className="glass-panel" style={{
+        <div className="glass-panel factory-mode-sidebar" style={{
           padding: '18px',
           maxHeight: '740px',
           overflowY: 'auto',

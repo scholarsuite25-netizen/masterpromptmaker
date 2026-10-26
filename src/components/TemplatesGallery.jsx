@@ -69,7 +69,7 @@ export function TemplatesGallery({ onSelectTemplate, onNotify }) {
         gap: '14px'
       }}>
         {/* Category Pills */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="scroll-pills-row" style={{ width: '100%', marginBottom: '4px' }}>
           {categories.map((cat) => (
             <button
               key={cat}
@@ -82,7 +82,9 @@ export function TemplatesGallery({ onSelectTemplate, onNotify }) {
                 background: selectedCategory === cat ? 'var(--gradient-red-blue)' : 'var(--bg-surface-elevated)',
                 color: selectedCategory === cat ? '#ffffff' : 'var(--text-secondary)',
                 border: `1px solid ${selectedCategory === cat ? 'transparent' : 'var(--border-subtle)'}`,
-                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-red)' : 'none'
+                boxShadow: selectedCategory === cat ? 'var(--shadow-glow-red)' : 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
             >
               {cat}
@@ -91,7 +93,7 @@ export function TemplatesGallery({ onSelectTemplate, onNotify }) {
         </div>
 
         {/* Search Input */}
-        <div style={{ position: 'relative', minWidth: '260px' }}>
+        <div className="search-bar-wrap" style={{ position: 'relative', width: '100%' }}>
           <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -103,18 +105,15 @@ export function TemplatesGallery({ onSelectTemplate, onNotify }) {
               paddingLeft: '36px',
               fontSize: '0.85rem',
               paddingTop: '8px',
-              paddingBottom: '8px'
+              paddingBottom: '8px',
+              width: '100%'
             }}
           />
         </div>
       </div>
 
       {/* Templates Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-        gap: '20px'
-      }}>
+      <div className="responsive-cards-grid">
         {filtered.map((tpl) => (
           <div
             key={tpl.id}

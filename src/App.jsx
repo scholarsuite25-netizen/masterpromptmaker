@@ -320,6 +320,7 @@ Output: Under 90 words per email, no pleasantry fluff.`
       {/* Floating 24/7 WhatsApp Quick Help & Feedback Widget (Bottom Left) */}
       <aside 
         aria-label="Direct Support and Feedback"
+        className="floating-feedback-widget"
         style={{
           position: 'fixed',
           bottom: '24px',

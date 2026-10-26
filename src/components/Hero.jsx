@@ -37,7 +37,7 @@ export function Hero({ onStartOptimizing, onExploreShop, onOpenFactory, onOpenSp
       </div>
 
       {/* Main Heading */}
-      <h1 style={{
+      <h1 className="hero-title" style={{
         fontSize: 'clamp(2.2rem, 5vw, 3.8rem)',
         lineHeight: 1.15,
         marginBottom: '18px',
@@ -63,10 +63,7 @@ export function Hero({ onStartOptimizing, onExploreShop, onOpenFactory, onOpenSp
       </p>
 
       {/* 4 Pillars Quick Navigation Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-        gap: '12px',
+      <div className="hero-pillars-grid" style={{
         maxWidth: '1020px',
         margin: '0 auto 36px auto'
       }}>

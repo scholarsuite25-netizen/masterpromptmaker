@@ -32,7 +32,7 @@ export function ProductPreviewModal({ product, currency, onClose, onAddToCart, o
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: '12px'
     }}>
       <div className="glass-panel" style={{
         maxWidth: '720px',
@@ -42,7 +42,7 @@ export function ProductPreviewModal({ product, currency, onClose, onAddToCart, o
         borderRadius: 'var(--radius-lg)',
         border: '1px solid var(--border-blue)',
         boxShadow: 'var(--shadow-glow-dual)',
-        padding: '28px',
+        padding: 'clamp(14px, 4vw, 28px)',
         position: 'relative',
         background: 'var(--bg-surface)'
       }}>
@@ -93,7 +93,7 @@ export function ProductPreviewModal({ product, currency, onClose, onAddToCart, o
           <h4 style={{ fontSize: '0.85rem', color: 'var(--blue-light)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             What's Included in the Full Version:
           </h4>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '8px' }}>
             {product.features.map((feat, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 <Check size={14} color="#10b981" />

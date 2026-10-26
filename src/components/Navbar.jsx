@@ -1,9 +1,13 @@
-import React from 'react';
-import { Sparkles, ShoppingBag, BookOpen, Layers, Bookmark, Sun, Moon, MessageSquare, Zap, SlidersHorizontal, Mic } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, ShoppingBag, BookOpen, Layers, Bookmark, Sun, Moon, MessageSquare, Zap, SlidersHorizontal, Mic, Menu, X, ChevronRight } from 'lucide-react';
 
 export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme }) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const scrollTo = (targetId, tab) => {
     if (setActiveTab) setActiveTab(tab);
+    setMobileMenuOpen(false);
+
     if (targetId === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -23,15 +27,24 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
     }
   };
 
+  const navItems = [
+    { id: 'optimizer-workbench', tab: 'optimizer', label: 'AI Optimizer', icon: Zap },
+    { id: 'content-factory-studio', tab: 'factory', label: 'Content Factory', badge: '30 Modes', icon: SlidersHorizontal },
+    { id: 'templates-gallery', tab: 'templates', label: 'Templates', icon: Layers },
+    { id: 'digital-shop', tab: 'shop', label: 'Special Shop', badge: 'HOT', icon: BookOpen },
+    { id: 'speaking-inquiry', tab: 'speaking', label: 'Invite S. B. Omotoso', icon: Mic },
+    { id: 'prompt-library', tab: 'library', label: 'My Library', icon: Bookmark },
+  ];
+
   return (
     <header className="glass-panel" style={{
       position: 'sticky',
-      top: 12,
+      top: 8,
       zIndex: 100,
-      margin: '12px auto 24px auto',
+      margin: '8px auto 20px auto',
       maxWidth: '1380px',
       borderRadius: 'var(--radius-lg)',
-      padding: '12px 20px',
+      padding: '10px 16px',
       border: '1px solid var(--border-glass)',
       background: 'var(--bg-glass)',
       backdropFilter: 'blur(20px)',
@@ -41,8 +54,7 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '14px'
+        gap: '12px'
       }}>
         {/* Brand Logo */}
         <div 
@@ -52,185 +64,97 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
             alignItems: 'center',
             gap: '10px',
             cursor: 'pointer',
-            userSelect: 'none'
+            userSelect: 'none',
+            flexShrink: 0
           }}
         >
           <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '12px',
+            width: '38px',
+            height: '38px',
+            borderRadius: '10px',
             background: 'var(--gradient-brand)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: 'var(--shadow-glow-dual)',
-            color: '#fff'
+            color: '#fff',
+            flexShrink: 0
           }}>
-            <Sparkles size={22} />
+            <Sparkles size={20} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{
                 fontFamily: 'var(--font-display)',
                 fontWeight: 800,
-                fontSize: '1.25rem',
+                fontSize: '1.15rem',
                 letterSpacing: '-0.03em',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                whiteSpace: 'nowrap'
               }}>
                 Master<span className="gradient-text-red-blue">Prompt</span> Studio
               </span>
               <span style={{
-                fontSize: '0.7rem',
+                fontSize: '0.65rem',
                 fontWeight: 700,
                 background: 'var(--blue-subtle)',
                 color: 'var(--blue-light)',
-                padding: '2px 6px',
+                padding: '2px 5px',
                 borderRadius: '6px',
                 border: '1px solid var(--border-blue)'
               }}>
                 .AI
               </span>
             </div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div className="hide-on-mobile" style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }}></span>
               100% Free AI Tool + Digital Factory & Shop
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <nav style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          background: 'var(--bg-surface-elevated)',
-          padding: '4px',
-          borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--border-subtle)',
-          flexWrap: 'wrap'
-        }}>
-          <button
-            onClick={() => scrollTo('optimizer-workbench', 'optimizer')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'optimizer' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'optimizer' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'optimizer' ? 'var(--shadow-sm)' : 'none'
-            }}
-          >
-            <Zap size={16} />
-            AI Optimizer
-          </button>
-
-          <button
-            onClick={() => scrollTo('content-factory-studio', 'factory')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'factory' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'factory' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'factory' ? 'var(--shadow-sm)' : 'none',
-              position: 'relative'
-            }}
-          >
-            <SlidersHorizontal size={16} />
-            Content Factory
-            <span style={{
-              background: 'rgba(59, 130, 246, 0.25)',
-              color: 'var(--blue-light)',
-              fontSize: '0.62rem',
-              padding: '1px 5px',
-              borderRadius: '6px',
-              fontWeight: 800,
-              border: '1px solid var(--border-blue)'
-            }}>
-              30 Modes
-            </span>
-          </button>
-
-          <button
-            onClick={() => scrollTo('templates-gallery', 'templates')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'templates' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'templates' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'templates' ? 'var(--shadow-sm)' : 'none'
-            }}
-          >
-            <Layers size={16} />
-            Templates
-          </button>
-
-          <button
-            onClick={() => scrollTo('digital-shop', 'shop')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'shop' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'shop' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'shop' ? 'var(--shadow-sm)' : 'none',
-              position: 'relative'
-            }}
-          >
-            <BookOpen size={16} />
-            Special Shop
-            <span style={{
-              background: 'var(--red-primary)',
-              color: '#fff',
-              fontSize: '0.62rem',
-              padding: '1px 5px',
-              borderRadius: '10px',
-              fontWeight: 800
-            }}>
-              HOT
-            </span>
-          </button>
-
-          <button
-            onClick={() => scrollTo('speaking-inquiry', 'speaking')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'speaking' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'speaking' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'speaking' ? 'var(--shadow-sm)' : 'none'
-            }}
-          >
-            <Mic size={16} color="var(--red-light)" />
-            Invite S. B. Omotoso
-          </button>
-
-          <button
-            onClick={() => scrollTo('prompt-library', 'library')}
-            className="btn"
-            style={{
-              padding: '8px 13px',
-              fontSize: '0.85rem',
-              borderRadius: '8px',
-              background: activeTab === 'library' ? 'var(--gradient-red-blue)' : 'transparent',
-              color: activeTab === 'library' ? '#fff' : 'var(--text-secondary)',
-              boxShadow: activeTab === 'library' ? 'var(--shadow-sm)' : 'none'
-            }}
-          >
-            <Bookmark size={16} />
-            My Library
-          </button>
+        {/* Desktop Navigation Tabs */}
+        <nav className="desktop-nav">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.tab;
+            return (
+              <button
+                key={item.id}
+                onClick={() => scrollTo(item.id, item.tab)}
+                className="btn"
+                style={{
+                  padding: '7px 12px',
+                  fontSize: '0.825rem',
+                  borderRadius: '8px',
+                  background: isActive ? 'var(--gradient-red-blue)' : 'transparent',
+                  color: isActive ? '#fff' : 'var(--text-secondary)',
+                  boxShadow: isActive ? 'var(--shadow-sm)' : 'none',
+                  position: 'relative'
+                }}
+              >
+                <Icon size={15} color={item.tab === 'speaking' ? 'var(--red-light)' : undefined} />
+                {item.label}
+                {item.badge && (
+                  <span style={{
+                    background: item.badge === 'HOT' ? 'var(--red-primary)' : 'rgba(59, 130, 246, 0.25)',
+                    color: item.badge === 'HOT' ? '#fff' : 'var(--blue-light)',
+                    fontSize: '0.6rem',
+                    padding: '1px 5px',
+                    borderRadius: '6px',
+                    fontWeight: 800,
+                    border: item.badge === 'HOT' ? 'none' : '1px solid var(--border-blue)'
+                  }}>
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </nav>
 
         {/* Right Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           {/* WhatsApp Direct Chat */}
           <a
             href="https://wa.me/2348034710699?text=Hello%20Master%20Prompt%20Studio%20Support!%20I%20have%20an%20inquiry%20about%20your%20prompts%20and%20eBooks."
@@ -238,14 +162,14 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
             rel="noopener noreferrer"
             className="btn btn-whatsapp hide-on-mobile"
             style={{
-              padding: '7px 12px',
-              fontSize: '0.8rem',
+              padding: '7px 11px',
+              fontSize: '0.78rem',
               borderRadius: 'var(--radius-sm)'
             }}
             title="Chat directly on WhatsApp (+2348034710699)"
           >
-            <MessageSquare size={15} />
-            WhatsApp Support
+            <MessageSquare size={14} />
+            WhatsApp
           </a>
 
           {/* Cart Button */}
@@ -254,25 +178,25 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
             className="btn btn-secondary"
             style={{
               position: 'relative',
-              padding: '8px 14px',
+              padding: '7px 11px',
               borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--border-blue)'
             }}
             title="View Shopping Cart"
           >
-            <ShoppingBag size={18} color="var(--blue-light)" />
-            <span className="hide-on-mobile" style={{ fontSize: '0.85rem' }}>Cart</span>
+            <ShoppingBag size={17} color="var(--blue-light)" />
+            <span className="hide-on-mobile" style={{ fontSize: '0.8rem' }}>Cart</span>
             {cartCount > 0 && (
               <span style={{
                 position: 'absolute',
-                top: '-6px',
-                right: '-6px',
+                top: '-5px',
+                right: '-5px',
                 background: 'var(--red-primary)',
                 color: '#fff',
-                fontSize: '0.72rem',
+                fontSize: '0.68rem',
                 fontWeight: 800,
-                width: '20px',
-                height: '20px',
+                width: '18px',
+                height: '18px',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
@@ -289,15 +213,147 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
             onClick={toggleTheme}
             className="btn btn-secondary"
             style={{
-              padding: '8px 10px',
+              padding: '7px 9px',
               borderRadius: 'var(--radius-sm)'
             }}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Cyber Mode'}
           >
-            {theme === 'dark' ? <Sun size={18} color="#f59e0b" /> : <Moon size={18} color="#6366f1" />}
+            {theme === 'dark' ? <Sun size={17} color="#f59e0b" /> : <Moon size={17} color="#6366f1" />}
+          </button>
+
+          {/* Mobile Hamburger Menu Toggle Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="btn btn-secondary mobile-menu-toggle"
+            style={{
+              padding: '7px 9px',
+              borderRadius: 'var(--radius-sm)',
+              border: '1px solid var(--border-red)'
+            }}
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X size={18} color="var(--red-light)" /> : <Menu size={18} color="var(--text-primary)" />}
           </button>
         </div>
       </div>
+
+      {/* Mobile Swipeable Quick-Pill Bar */}
+      <div className="mobile-quick-pills">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.tab;
+          return (
+            <button
+              key={item.id}
+              onClick={() => scrollTo(item.id, item.tab)}
+              className="btn"
+              style={{
+                padding: '5px 10px',
+                fontSize: '0.75rem',
+                borderRadius: 'var(--radius-full)',
+                background: isActive ? 'var(--gradient-red-blue)' : 'var(--bg-surface-elevated)',
+                color: isActive ? '#fff' : 'var(--text-secondary)',
+                border: `1px solid ${isActive ? 'transparent' : 'var(--border-subtle)'}`,
+                boxShadow: isActive ? 'var(--shadow-glow-dual)' : 'none',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
+              }}
+            >
+              <Icon size={13} color={item.tab === 'speaking' ? 'var(--red-light)' : undefined} />
+              {item.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Mobile Dropdown Drawer Menu */}
+      {mobileMenuOpen && (
+        <div style={{
+          marginTop: '12px',
+          paddingTop: '12px',
+          borderTop: '1px solid var(--border-glass)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px'
+        }}>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.tab;
+            return (
+              <div
+                key={item.id}
+                onClick={() => scrollTo(item.id, item.tab)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 14px',
+                  borderRadius: 'var(--radius-md)',
+                  background: isActive ? 'var(--gradient-surface)' : 'var(--bg-surface-elevated)',
+                  border: `1px solid ${isActive ? 'var(--blue-light)' : 'var(--border-subtle)'}`,
+                  color: isActive ? '#fff' : 'var(--text-primary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: isActive ? 'var(--blue-primary)' : 'rgba(148, 163, 184, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: isActive ? '#fff' : 'var(--blue-light)'
+                  }}>
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{item.label}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {item.badge && (
+                    <span style={{
+                      background: item.badge === 'HOT' ? 'var(--red-primary)' : 'rgba(59, 130, 246, 0.25)',
+                      color: item.badge === 'HOT' ? '#fff' : 'var(--blue-light)',
+                      fontSize: '0.62rem',
+                      padding: '2px 6px',
+                      borderRadius: '6px',
+                      fontWeight: 800
+                    }}>
+                      {item.badge}
+                    </span>
+                  )}
+                  <ChevronRight size={16} color="var(--text-muted)" />
+                </div>
+              </div>
+            );
+          })}
+
+          {/* WhatsApp Direct in Mobile Menu */}
+          <a
+            href="https://wa.me/2348034710699?text=Hello%20Master%20Prompt%20Studio%20Support!%20I%20have%20an%20inquiry%20about%20your%20prompts%20and%20eBooks."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-whatsapp"
+            style={{
+              padding: '12px 16px',
+              fontSize: '0.875rem',
+              borderRadius: 'var(--radius-md)',
+              marginTop: '6px',
+              justifyContent: 'center'
+            }}
+          >
+            <MessageSquare size={16} />
+            Chat with Samuel Omotoso on WhatsApp
+          </a>
+        </div>
+      )}
     </header>
   );
 }
+
+export default Navbar;

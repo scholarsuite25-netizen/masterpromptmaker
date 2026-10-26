@@ -14,13 +14,13 @@ export function Footer({ setActiveTab, scrollToSection }) {
     <footer style={{
       borderTop: '1px solid var(--border-subtle)',
       background: 'var(--bg-surface)',
-      padding: '48px 24px 32px 24px',
+      padding: '48px clamp(14px, 3vw, 24px) 32px clamp(14px, 3vw, 24px)',
       position: 'relative',
       zIndex: 1
     }}>
       <div className="app-container" style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
         gap: '36px',
         marginBottom: '36px'
       }}>
