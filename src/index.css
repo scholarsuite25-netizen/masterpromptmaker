@@ -717,3 +717,110 @@ pre, code {
   }
 }
 
+/* ========================================================
+   Mobile Vertical Forms Utilities
+   ======================================================== */
+.form-row-mobile {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-row-three-mobile {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-vertical-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .form-row-mobile,
+  .form-row-three-mobile,
+  .form-vertical-mobile {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .form-row-mobile > *,
+  .form-row-three-mobile > *,
+  .form-vertical-mobile > * {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .input-field,
+  select.input-field {
+    min-height: 48px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ========================================================
+   Drawer Expandable Submenu Styling
+   ======================================================== */
+.drawer-main-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.drawer-main-item:hover,
+.drawer-main-item.active {
+  background: var(--gradient-surface);
+  border-color: var(--blue-light);
+  color: #fff;
+}
+
+.drawer-submenus-wrap {
+  margin-left: 20px;
+  padding-left: 14px;
+  border-left: 2px solid var(--blue-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.drawer-submenu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.825rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.drawer-submenu-item:hover {
+  background: var(--blue-subtle);
+  color: var(--blue-light);
+  border-color: var(--border-blue);
+  padding-left: 16px;
+}
+
+

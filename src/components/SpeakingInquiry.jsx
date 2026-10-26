@@ -178,9 +178,9 @@ export function SpeakingInquiry({ onNotify }) {
         </div>
 
         {!submitted ? (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="form-vertical-mobile">
             {/* Row 1: Full Name & Organization */}
-            <div className="responsive-two-col" style={{ marginBottom: '18px' }}>
+            <div className="form-row-mobile">
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
                   YOUR FULL NAME *
@@ -192,13 +192,13 @@ export function SpeakingInquiry({ onNotify }) {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
-                  ORGANIZATION / COMPANY / INSTITUTION *
+                  ORGANIZATION / INSTITUTION *
                 </label>
                 <input
                   type="text"
@@ -207,13 +207,13 @@ export function SpeakingInquiry({ onNotify }) {
                   value={organization}
                   onChange={(e) => setOrganization(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
             </div>
 
             {/* Row 2: Corporate Email & Phone/WhatsApp */}
-            <div className="responsive-two-col" style={{ marginBottom: '18px' }}>
+            <div className="form-row-mobile">
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
                   CORPORATE EMAIL ADDRESS *
@@ -225,7 +225,7 @@ export function SpeakingInquiry({ onNotify }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
 
@@ -239,18 +239,13 @@ export function SpeakingInquiry({ onNotify }) {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
             </div>
 
             {/* Row 3: Engagement Format, Date, Location */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 210px), 1fr))',
-              gap: '18px',
-              marginBottom: '18px'
-            }}>
+            <div className="form-row-three-mobile">
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
                   ENGAGEMENT FORMAT
@@ -259,7 +254,7 @@ export function SpeakingInquiry({ onNotify }) {
                   value={engagementFormat}
                   onChange={(e) => setEngagementFormat(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 >
                   <option value="Keynote Address" style={{ background: '#0f172a', color: '#fff' }}>Keynote Address</option>
                   <option value="Convocation Lecture" style={{ background: '#0f172a', color: '#fff' }}>Convocation Lecture</option>
@@ -271,7 +266,7 @@ export function SpeakingInquiry({ onNotify }) {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '6px', letterSpacing: '0.04em' }}>
-                  EVENT DATE (OR TARGET MONTH)
+                  EVENT DATE / TARGET MONTH
                 </label>
                 <input
                   type="text"
@@ -279,7 +274,7 @@ export function SpeakingInquiry({ onNotify }) {
                   value={eventDate}
                   onChange={(e) => setEventDate(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
 
@@ -293,7 +288,7 @@ export function SpeakingInquiry({ onNotify }) {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.9rem', padding: '12px 14px' }}
+                  style={{ fontSize: '0.95rem', padding: '12px 14px', width: '100%' }}
                 />
               </div>
             </div>

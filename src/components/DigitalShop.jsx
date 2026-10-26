@@ -50,37 +50,21 @@ export function DigitalShop({
           Explore curated high-yield digital products: master prompt vaults, eBooks, Notion OS workspaces, Next.js code boilerplates, Figma design systems, financial models, and legal contract suites. Instant automated checkout via WhatsApp with verified OPAY & GTB bank transfer.
         </p>
 
-        {/* Dual Payment Notice Bar (OPAY + GTB) */}
+        {/* Streamlined Trust Badge */}
         <div style={{
-          marginTop: '20px',
+          marginTop: '16px',
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '14px',
-          padding: '10px 22px',
-          borderRadius: 'var(--radius-md)',
+          gap: '10px',
+          padding: '6px 16px',
+          borderRadius: 'var(--radius-full)',
           background: 'var(--bg-surface-elevated)',
           border: '1px solid var(--border-blue)',
-          fontSize: '0.85rem',
-          flexWrap: 'wrap',
-          justifyContent: 'center'
+          fontSize: '0.8rem',
+          color: 'var(--text-secondary)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
-            <span>
-              <strong>OPAY:</strong> <strong style={{ color: '#34d399', fontFamily: 'var(--font-mono)' }}>8034710699</strong> (Samuel Omotoso)
-            </span>
-          </div>
-          <span style={{ color: 'var(--text-muted)' }}>•</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f97316' }}></span>
-            <span>
-              <strong>GTB:</strong> <strong style={{ color: 'var(--blue-light)', fontFamily: 'var(--font-mono)' }}>0029103844</strong>
-            </span>
-          </div>
-          <span style={{ color: 'var(--text-muted)' }}>•</span>
-          <span style={{ color: '#25d366', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <MessageSquare size={14} /> WhatsApp: +2348034710699
-          </span>
+          <ShieldCheck size={15} color="#10b981" />
+          <span>Instant OPAY & GTB Delivery • Single-User Authorized License</span>
         </div>
       </div>
 

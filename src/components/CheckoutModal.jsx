@@ -215,13 +215,13 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
                 Select Preferred Payment Gateway:
               </label>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              <div className="form-row-mobile">
                 {Object.values(BANK_ACCOUNTS).map((b) => (
                   <div
                     key={b.id}
                     onClick={() => setSelectedBankKey(b.id)}
                     style={{
-                      padding: '12px',
+                      padding: '12px 14px',
                       borderRadius: 'var(--radius-md)',
                       background: selectedBankKey === b.id ? b.bgSubtle : 'var(--bg-surface-elevated)',
                       border: `1.5px solid ${selectedBankKey === b.id ? b.tagColor : 'var(--border-subtle)'}`,
@@ -264,7 +264,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
                 </span>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div className="form-row-mobile" style={{ marginBottom: '12px' }}>
                 <div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Bank Name</div>
                   <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -376,7 +376,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
                 After verifying your payment receipt, Samuel will reply to you on WhatsApp with your unique unlock code (e.g., <code>SO-XXXX</code>). Paste it below to unlock your downloads:
               </p>
 
-              <form onSubmit={handleVerifyCode} style={{ display: 'flex', gap: '10px' }}>
+              <form onSubmit={handleVerifyCode} className="form-vertical-mobile">
                 <input
                   type="text"
                   placeholder="e.g. SO-8492"
@@ -388,18 +388,27 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
                   className="input-field"
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '1rem',
+                    fontSize: '1.05rem',
                     fontWeight: 700,
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase',
-                    borderColor: verifyError ? 'var(--red-primary)' : 'var(--border-subtle)'
+                    borderColor: verifyError ? 'var(--red-primary)' : 'var(--border-subtle)',
+                    width: '100%',
+                    minHeight: '48px',
+                    padding: '12px 14px'
                   }}
                 />
 
                 <button
                   type="submit"
                   className="btn btn-blue"
-                  style={{ padding: '0 20px', fontSize: '0.9rem', fontWeight: 700 }}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    fontSize: '0.95rem',
+                    fontWeight: 700,
+                    minHeight: '48px'
+                  }}
                 >
                   Verify & Unlock Access
                 </button>

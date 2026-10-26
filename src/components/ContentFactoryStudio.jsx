@@ -268,7 +268,7 @@ export function ContentFactoryStudio({ onNotify }) {
             </div>
 
             {/* Inputs Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+            <div className="form-row-mobile" style={{ marginBottom: '14px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Project Title:
@@ -278,7 +278,7 @@ export function ContentFactoryStudio({ onNotify }) {
                   value={titleInput}
                   onChange={(e) => setTitleInput(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.85rem' }}
+                  style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '12px 14px' }}
                 />
               </div>
 
@@ -291,12 +291,12 @@ export function ContentFactoryStudio({ onNotify }) {
                   value={audienceInput}
                   onChange={(e) => setAudienceInput(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.85rem' }}
+                  style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '12px 14px' }}
                 />
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px', marginBottom: '18px' }}>
+            <div className="form-row-mobile" style={{ marginBottom: '18px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Core Theme & Objectives:
@@ -306,7 +306,7 @@ export function ContentFactoryStudio({ onNotify }) {
                   value={themeInput}
                   onChange={(e) => setThemeInput(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.85rem' }}
+                  style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '12px 14px' }}
                 />
               </div>
 
@@ -318,7 +318,7 @@ export function ContentFactoryStudio({ onNotify }) {
                   value={selectedFormat}
                   onChange={(e) => setSelectedFormat(e.target.value)}
                   className="input-field"
-                  style={{ fontSize: '0.85rem' }}
+                  style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '12px 14px' }}
                 >
                   {activeMode.outputFormats.map((fmt, idx) => (
                     <option key={idx} value={fmt} style={{ background: '#0f172a', color: '#fff' }}>

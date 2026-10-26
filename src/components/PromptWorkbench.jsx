@@ -628,12 +628,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
           )}
 
           {/* Tone & Format Selectors */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '12px',
-            marginBottom: '20px'
-          }}>
+          <div className="form-row-mobile" style={{ marginBottom: '20px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
                 Tone of Voice:
@@ -642,7 +637,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
                 value={selectedTone}
                 onChange={(e) => setSelectedTone(e.target.value)}
                 className="input-field"
-                style={{ fontSize: '0.85rem', padding: '9px 12px' }}
+                style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '10px 14px' }}
               >
                 {TONE_OPTIONS.map((t) => (
                   <option key={t.id} value={t.id} style={{ background: '#0f172a', color: '#fff' }}>
@@ -660,7 +655,7 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
                 value={selectedFormat}
                 onChange={(e) => setSelectedFormat(e.target.value)}
                 className="input-field"
-                style={{ fontSize: '0.85rem', padding: '9px 12px' }}
+                style={{ fontSize: '0.9rem', width: '100%', minHeight: '48px', padding: '10px 14px' }}
               >
                 {FORMAT_OPTIONS.map((f) => (
                   <option key={f.id} value={f.id} style={{ background: '#0f172a', color: '#fff' }}>
