@@ -97,15 +97,15 @@ export function Footer({ setActiveTab, scrollToSection }) {
                 onClick={() => handleNav('optimizer-workbench', 'optimizer')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                AI Prompt Studio (Free)
+                Prompt Studio
               </button>
             </li>
             <li>
               <button 
                 onClick={() => handleNav('content-factory-studio', 'factory')}
-                style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                Content Factory Studio (30 Modes)
+                Content Factory
               </button>
             </li>
             <li>
@@ -113,7 +113,7 @@ export function Footer({ setActiveTab, scrollToSection }) {
                 onClick={() => handleNav('templates-gallery', 'templates')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                Free Prompt Templates
+                Prompt Templates
               </button>
             </li>
             <li>
@@ -121,15 +121,15 @@ export function Footer({ setActiveTab, scrollToSection }) {
                 onClick={() => handleNav('digital-shop', 'shop')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                Special Shop & eBooks
+                Digital Store
               </button>
             </li>
             <li>
               <button 
                 onClick={() => handleNav('speaking-inquiry', 'speaking')}
-                style={{ background: 'transparent', border: 'none', color: 'var(--red-light)', cursor: 'pointer', padding: 0, fontWeight: 600 }}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                Invite S. B. Omotoso (Keynote)
+                Speaker Booking (S. B. Omotoso)
               </button>
             </li>
             <li>
@@ -137,7 +137,7 @@ export function Footer({ setActiveTab, scrollToSection }) {
                 onClick={() => handleNav('prompt-library', 'library')}
                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: 0 }}
               >
-                My Saved Prompts & Purchases
+                My Library
               </button>
             </li>
           </ul>

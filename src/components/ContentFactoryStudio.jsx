@@ -104,38 +104,28 @@ export function ContentFactoryStudio({ onNotify }) {
   return (
     <section id="content-factory-studio" style={{ marginBottom: '80px' }}>
       {/* Studio Header */}
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
           gap: '8px',
           padding: '4px 14px',
           borderRadius: 'var(--radius-full)',
-          background: 'var(--red-subtle)',
-          border: '1px solid var(--border-red)',
+          background: 'var(--bg-surface-elevated)',
+          border: '1px solid var(--border-blue)',
           marginBottom: '12px'
         }}>
-          <Sparkles size={14} color="var(--red-light)" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--red-light)', textTransform: 'uppercase' }}>
-            Digital Content Factory v1.7 Suite
-          </span>
-          <span style={{
-            fontSize: '0.65rem',
-            fontWeight: 800,
-            background: 'var(--blue-primary)',
-            color: '#fff',
-            padding: '2px 8px',
-            borderRadius: '10px'
-          }}>
+          <Sparkles size={14} color="var(--blue-light)" />
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
             30 Production Modes
           </span>
         </div>
 
-        <h2 style={{ fontSize: '2.4rem', fontWeight: 800, marginBottom: '10px' }}>
-          Autonomous <span className="gradient-text-red-blue">Digital Content Factory Studio</span>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', fontWeight: 800, marginBottom: '10px' }}>
+          Digital <span className="gradient-text-red-blue">Content Factory</span>
         </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '720px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.6 }}>
-          Transform raw ideas into publication-ready eBooks, academic research papers, keynote speeches, comprehensive courses, and marketing funnels using the factory's verified integrity standards.
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          Generate publication-ready eBooks, academic papers, keynote speeches, courses, and marketing copy.
         </p>
       </div>
 

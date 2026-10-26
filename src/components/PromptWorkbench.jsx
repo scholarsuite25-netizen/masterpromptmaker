@@ -305,101 +305,9 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
 
   return (
     <section id="optimizer-workbench" style={{ marginBottom: '60px' }}>
-      {/* Top Banner: Mode Segmented Switcher & Live Social Proof Telemetry Counter */}
+      {/* Sleek Model & Modality Toolbar */}
       <div className="glass-panel" style={{
-        padding: '14px 20px',
-        marginBottom: '16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '14px'
-      }}>
-        {/* Left: Dual AI Mode Pill Switcher (Text AI vs Image AI) */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            display: 'inline-flex',
-            background: 'var(--bg-surface-elevated)',
-            padding: '3px',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--border-subtle)'
-          }}>
-            <button
-              onClick={() => handleModeSwitch('text')}
-              className="btn"
-              style={{
-                padding: '6px 14px',
-                fontSize: '0.8rem',
-                borderRadius: '6px',
-                background: aiMode === 'text' ? 'var(--blue-primary)' : 'transparent',
-                color: aiMode === 'text' ? '#ffffff' : 'var(--text-secondary)',
-                fontWeight: aiMode === 'text' ? 700 : 500,
-                boxShadow: aiMode === 'text' ? 'var(--shadow-glow-blue)' : 'none'
-              }}
-            >
-              <Type size={14} />
-              Text AI (LLMs)
-            </button>
-            <button
-              onClick={() => handleModeSwitch('image')}
-              className="btn"
-              style={{
-                padding: '6px 14px',
-                fontSize: '0.8rem',
-                borderRadius: '6px',
-                background: aiMode === 'image' ? 'var(--red-primary)' : 'transparent',
-                color: aiMode === 'image' ? '#ffffff' : 'var(--text-secondary)',
-                fontWeight: aiMode === 'image' ? 700 : 500,
-                boxShadow: aiMode === 'image' ? 'var(--shadow-glow-red)' : 'none'
-              }}
-            >
-              <Image size={14} />
-              Image AI (Midjourney)
-            </button>
-          </div>
-        </div>
-
-        {/* Center: Live Social Proof Telemetry Counter */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'rgba(16, 185, 129, 0.1)',
-          border: '1px solid rgba(16, 185, 129, 0.3)',
-          padding: '5px 14px',
-          borderRadius: 'var(--radius-full)'
-        }}>
-          <span style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: '#10b981',
-            display: 'inline-block',
-            boxShadow: '0 0 8px #10b981'
-          }}></span>
-          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#34d399' }}>
-            381,420+ Prompts Optimized • +79% Avg. Yield
-          </span>
-        </div>
-
-        {/* Right: Optional Live API Key Drawer Toggle */}
-        <button
-          onClick={() => setShowApiSettings(!showApiSettings)}
-          className="btn btn-secondary"
-          style={{
-            fontSize: '0.8rem',
-            padding: '6px 12px',
-            border: '1px solid var(--border-subtle)'
-          }}
-        >
-          <Key size={14} color="var(--red-light)" />
-          {showApiSettings ? "Hide API Key Drawer" : "Live API Key (Optional)"}
-        </button>
-      </div>
-
-      {/* Target Model Bar */}
-      <div className="glass-panel" style={{
-        padding: '12px 20px',
+        padding: '12px 18px',
         marginBottom: '20px',
         display: 'flex',
         alignItems: 'center',
@@ -407,77 +315,81 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
         flexWrap: 'wrap',
         gap: '12px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
-            Target Model:
-          </span>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            {MODEL_OPTIONS.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => {
-                  setSelectedModel(m.id);
-                  if (m.id === 'midjourney') setAiMode('image');
-                  else setAiMode('text');
-                }}
-                className="btn"
-                style={{
-                  padding: '6px 12px',
-                  fontSize: '0.8rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: selectedModel === m.id ? 'var(--blue-primary)' : 'var(--bg-surface-elevated)',
-                  color: selectedModel === m.id ? '#ffffff' : 'var(--text-secondary)',
-                  border: `1px solid ${selectedModel === m.id ? 'var(--blue-light)' : 'var(--border-subtle)'}`,
-                  boxShadow: selectedModel === m.id ? 'var(--shadow-glow-blue)' : 'none'
-                }}
-              >
-                {getModelIcon(m.id)}
-                {m.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-          100% Free Client-Side Heuristics • Zero latency
-        </span>
-      </div>
-
-      {/* API Key Drawer (Optional BYO Key) */}
-      {showApiSettings && (
-        <div className="glass-panel" style={{
-          padding: '16px 20px',
-          marginBottom: '20px',
-          border: '1px solid var(--border-red)',
-          background: 'rgba(239, 68, 68, 0.05)'
+        {/* Left: Dual AI Modality (Text vs Image) */}
+        <div style={{
+          display: 'inline-flex',
+          background: 'var(--bg-surface-elevated)',
+          padding: '3px',
+          borderRadius: 'var(--radius-full)',
+          border: '1px solid var(--border-subtle)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--red-light)' }}>
-              Optional: Live OpenAI or OpenRouter Key for direct execution
-            </span>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              100% Client-side. Key never leaves your browser.
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <input
-              type="password"
-              placeholder="sk-..."
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="input-field"
-              style={{ fontSize: '0.85rem', padding: '8px 12px' }}
-            />
-            <button
-              onClick={() => onNotify("API Key stored locally for this session!", "success")}
-              className="btn btn-red"
-              style={{ fontSize: '0.85rem' }}
-            >
-              Save Key
-            </button>
-          </div>
+          <button
+            onClick={() => handleModeSwitch('text')}
+            style={{
+              padding: '6px 14px',
+              fontSize: '0.8rem',
+              fontWeight: aiMode === 'text' ? 700 : 500,
+              borderRadius: 'var(--radius-full)',
+              background: aiMode === 'text' ? 'var(--blue-primary)' : 'transparent',
+              color: aiMode === 'text' ? '#ffffff' : 'var(--text-secondary)',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Type size={13} />
+            Text LLMs
+          </button>
+          <button
+            onClick={() => handleModeSwitch('image')}
+            style={{
+              padding: '6px 14px',
+              fontSize: '0.8rem',
+              fontWeight: aiMode === 'image' ? 700 : 500,
+              borderRadius: 'var(--radius-full)',
+              background: aiMode === 'image' ? 'var(--red-primary)' : 'transparent',
+              color: aiMode === 'image' ? '#ffffff' : 'var(--text-secondary)',
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Image size={13} />
+            Midjourney
+          </button>
         </div>
-      )}
+
+        {/* Right: Target Model Selection */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+          {MODEL_OPTIONS.map((m) => (
+            <button
+              key={m.id}
+              onClick={() => {
+                setSelectedModel(m.id);
+                if (m.id === 'midjourney') setAiMode('image');
+                else setAiMode('text');
+              }}
+              className="btn"
+              style={{
+                padding: '6px 12px',
+                fontSize: '0.8rem',
+                borderRadius: 'var(--radius-full)',
+                background: selectedModel === m.id ? 'var(--blue-primary)' : 'var(--bg-surface-elevated)',
+                color: selectedModel === m.id ? '#ffffff' : 'var(--text-secondary)',
+                border: `1px solid ${selectedModel === m.id ? 'var(--blue-light)' : 'var(--border-subtle)'}`,
+                boxShadow: selectedModel === m.id ? 'var(--shadow-glow-blue)' : 'none'
+              }}
+            >
+              {getModelIcon(m.id)}
+              {m.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Main Dual-Panel Workbench */}
       <div className="responsive-workbench-grid">

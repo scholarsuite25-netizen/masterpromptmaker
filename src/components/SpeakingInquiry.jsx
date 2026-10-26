@@ -104,17 +104,17 @@ export function SpeakingInquiry({ onNotify }) {
               S. B. <span className="gradient-text-red-blue">Omotoso</span>
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '16px' }}>
-              Renowned university administrator, orator, and digital transformation strategist. Renowned for delivering transformative convocation addresses, leadership retreats, and keynote presentations across tertiary institutions and corporate summits.
+              University administrator, orator, and digital transformation strategist delivering transformative convocation lectures, leadership retreats, and keynotes across tertiary institutions and corporate summits.
             </p>
 
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', fontSize: '0.85rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <CheckCircle2 size={16} color="#10b981" />
-                <span>40+ Convocation & Keynote Lectures</span>
+                <span>40+ Keynote & Convocation Lectures</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <CheckCircle2 size={16} color="#10b981" />
-                <span>Direct WhatsApp: +2348034710699</span>
+                <span>WhatsApp: +2348034710699</span>
               </div>
             </div>
           </div>

@@ -34,27 +34,12 @@ export function TemplatesGallery({ onSelectTemplate, onNotify }) {
   return (
     <section id="templates-gallery" style={{ marginBottom: '60px' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '4px 14px',
-          borderRadius: 'var(--radius-full)',
-          background: 'var(--blue-subtle)',
-          border: '1px solid var(--border-blue)',
-          marginBottom: '12px'
-        }}>
-          <Sparkles size={14} color="var(--blue-light)" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--blue-light)', textTransform: 'uppercase' }}>
-            Free Pre-Engineered Prompts
-          </span>
-        </div>
-        <h2 style={{ fontSize: '2.2rem', marginBottom: '10px' }}>
-          Production-Grade <span className="gradient-text-red-blue">Prompt Templates</span>
+      <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.2rem)', marginBottom: '8px', fontWeight: 800 }}>
+          Prompt <span className="gradient-text-red-blue">Templates</span>
         </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Explore battle-tested system prompts built with RTF, STAR, and Chain-of-Thought frameworks. 100% free to copy or customize.
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '580px', margin: '0 auto', fontSize: '0.95rem' }}>
+          Battle-tested system prompts built with STAR, RTF, and Chain-of-Thought frameworks.
         </p>
       </div>
 

@@ -84,27 +84,12 @@ export function PromptLibrary({
   return (
     <section id="prompt-library" style={{ marginBottom: '80px' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '4px 14px',
-          borderRadius: 'var(--radius-full)',
-          background: 'var(--blue-subtle)',
-          border: '1px solid var(--border-blue)',
-          marginBottom: '12px'
-        }}>
-          <Bookmark size={14} color="var(--blue-light)" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--blue-light)', textTransform: 'uppercase' }}>
-            Personal Knowledge Vault
-          </span>
-        </div>
-        <h2 style={{ fontSize: '2.2rem', marginBottom: '10px' }}>
-          My Library & <span className="gradient-text-red-blue">Purchased Assets</span>
+      <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.2rem)', marginBottom: '8px', fontWeight: 800 }}>
+          My <span className="gradient-text-red-blue">Library</span>
         </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '620px', margin: '0 auto' }}>
-          Access your past optimized prompts and lifetime unlocked digital products verified by Samuel Omotoso.
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '540px', margin: '0 auto', fontSize: '0.95rem' }}>
+          Your saved prompt iterations and unlocked product downloads in one place.
         </p>
 
         {/* View Switcher Tabs */}

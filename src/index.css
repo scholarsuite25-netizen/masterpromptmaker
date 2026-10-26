@@ -559,9 +559,9 @@ pre, code {
 
 .hero-pillars-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 12px;
-  max-width: 1020px;
+  max-width: 1160px;
   margin: 0 auto 36px auto;
 }
 
@@ -822,5 +822,119 @@ pre, code {
   border-color: var(--border-blue);
   padding-left: 16px;
 }
+
+/* ========================================================
+   Desktop Dropdown Menu Architecture
+   ======================================================== */
+.desktop-nav-item-wrap {
+  position: relative;
+}
+
+.desktop-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 290px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), var(--shadow-glow-blue);
+  backdrop-filter: blur(24px);
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeInSlideDown 0.18s ease-out;
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.desktop-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.825rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  border: 1px solid transparent;
+}
+
+.desktop-dropdown-item:hover {
+  background: var(--blue-subtle);
+  color: #fff;
+  border-color: var(--border-blue);
+  transform: translateX(3px);
+}
+
+.desktop-dropdown-item .sub-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  line-height: 1.2;
+}
+
+.desktop-dropdown-item:hover .sub-title {
+  color: var(--blue-light);
+}
+
+/* ========================================================
+   Step-Grouped Desktop Form Cards
+   ======================================================== */
+.form-step-card {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-step-card:hover {
+  border-color: var(--border-glass);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+.form-step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.form-step-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: var(--blue-subtle);
+  color: var(--blue-light);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-blue);
+}
+
+.form-step-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
 
 

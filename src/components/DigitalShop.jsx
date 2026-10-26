@@ -27,45 +27,14 @@ export function DigitalShop({
   return (
     <section id="digital-shop" style={{ marginBottom: '80px' }}>
       {/* Store Header */}
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '4px 14px',
-          borderRadius: 'var(--radius-full)',
-          background: 'rgba(239, 68, 68, 0.12)',
-          border: '1px solid var(--border-red)',
-          marginBottom: '12px'
-        }}>
-          <Sparkles size={14} color="var(--red-light)" />
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--red-light)', textTransform: 'uppercase' }}>
-            Exclusive Digital Store
-          </span>
-        </div>
-        <h2 style={{ fontSize: '2.4rem', marginBottom: '12px', fontWeight: 800 }}>
-          Master <span className="gradient-text-red-blue">Digital Products Store</span>
+      {/* Store Header */}
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', marginBottom: '10px', fontWeight: 800 }}>
+          Digital <span className="gradient-text-red-blue">Products Store</span>
         </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '720px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.6 }}>
-          Explore curated high-yield digital products: master prompt vaults, eBooks, Notion OS workspaces, Next.js code boilerplates, Figma design systems, financial models, and legal contract suites. Instant automated checkout via WhatsApp with verified OPAY & GTB bank transfer.
+        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto', fontSize: '0.95rem', lineHeight: 1.6 }}>
+          Professional prompt vaults, creator playbooks, Notion workspaces, and code boilerplates with instant OPAY & GTB delivery.
         </p>
-
-        {/* Streamlined Trust Badge */}
-        <div style={{
-          marginTop: '16px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '10px',
-          padding: '6px 16px',
-          borderRadius: 'var(--radius-full)',
-          background: 'var(--bg-surface-elevated)',
-          border: '1px solid var(--border-blue)',
-          fontSize: '0.8rem',
-          color: 'var(--text-secondary)'
-        }}>
-          <ShieldCheck size={15} color="#10b981" />
-          <span>Instant OPAY & GTB Delivery • Single-User Authorized License</span>
-        </div>
       </div>
 
       {/* Filter, Currency & Search Controls */}
