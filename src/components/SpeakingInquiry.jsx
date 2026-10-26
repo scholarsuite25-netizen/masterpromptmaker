@@ -4,6 +4,8 @@ import {
   Users, Award, Building2, Sparkles, Check, Phone, Mail, ArrowRight 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { recordSpeakingInquiry } from '../utils/supabase';
+import { sendSpeakerInquiryEmail } from '../utils/emailService';
 
 export function SpeakingInquiry({ onNotify }) {
   const [fullName, setFullName] = useState("");
@@ -32,7 +34,31 @@ export function SpeakingInquiry({ onNotify }) {
     const ref = "SPK-" + Math.floor(100000 + Math.random() * 900000);
     setBookingRef(ref);
 
-    // Build structured WhatsApp inquiry
+    // 1. Record inquiry in Supabase Cloud
+    recordSpeakingInquiry({
+      name: fullName,
+      email,
+      organization,
+      eventType: engagementFormat,
+      date: eventDate,
+      audience: audienceSize,
+      topic: themeContext,
+      message: `Location: ${location || 'TBD'}. Phone: ${phone || 'N/A'}`
+    });
+
+    // 2. Dispatch email notification alert
+    sendSpeakerInquiryEmail({
+      name: fullName,
+      email,
+      organization,
+      eventType: engagementFormat,
+      date: eventDate,
+      audience: audienceSize,
+      topic: themeContext,
+      message: `Location: ${location || 'TBD'}. Phone: ${phone || 'N/A'}`
+    });
+
+    // 3. Build structured WhatsApp inquiry
     let message = `*KEYNOTE SPEAKING INQUIRY - S. B. OMOTOSO*\n`;
     message += `📋 *Booking Ref:* #${ref}\n\n`;
     message += `👤 *Client Name:* ${fullName}\n`;
@@ -57,7 +83,7 @@ export function SpeakingInquiry({ onNotify }) {
     });
 
     setSubmitted(true);
-    onNotify("Speaking inquiry generated! Connecting with S. B. Omotoso...", "success");
+    onNotify("Speaking inquiry recorded & connecting with S. B. Omotoso...", "success");
     window.open(whatsappUrl, '_blank');
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Sparkles, Copy, Check, ExternalLink, ArrowRight, RefreshCw, 
   Trash2, Bookmark, Download, Key, Sliders, CheckCircle2, 
-  BarChart3, Eye, FileText, Bot, Zap, Image, Cpu, Printer, ChevronDown, Type
+  BarChart3, Eye, FileText, Bot, Zap, Image, Cpu, Printer, ChevronDown, Type, Activity
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { 
@@ -12,6 +12,7 @@ import {
   FORMAT_OPTIONS, 
   optimizePromptLocally 
 } from '../utils/promptEngine';
+import { optimizePromptLive, isGroqConfigured } from '../utils/aiService';
 import { sampleWeakPrompts } from '../data/freeTemplates';
 
 function escapeHtml(str) {
@@ -60,14 +61,14 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
     }
   };
 
-  const handleOptimize = () => {
+  const handleOptimize = async () => {
     if (!rawPrompt.trim()) {
       onNotify("Please enter a prompt to optimize!", "red");
       return;
     }
     setIsOptimizing(true);
-    setTimeout(() => {
-      const output = optimizePromptLocally(rawPrompt, {
+    try {
+      const output = await optimizePromptLive(rawPrompt, {
         model: selectedModel,
         framework: selectedFramework,
         tone: selectedTone,
@@ -75,9 +76,25 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
         customGoal
       });
       setResult(output);
+      if (output.isLiveAi) {
+        onNotify(`Optimized with Live AI (${output.engine})!`, "success");
+      } else {
+        onNotify(`Optimized with ${selectedFramework.toUpperCase()} cognitive framework!`, "success");
+      }
+    } catch (err) {
+      console.warn("Optimize error fallback:", err);
+      const fallbackOutput = optimizePromptLocally(rawPrompt, {
+        model: selectedModel,
+        framework: selectedFramework,
+        tone: selectedTone,
+        format: selectedFormat,
+        customGoal
+      });
+      setResult(fallbackOutput);
+      onNotify("Optimized using offline cognitive heuristics.", "blue");
+    } finally {
       setIsOptimizing(false);
-      onNotify("Prompt successfully optimized with " + selectedFramework.toUpperCase() + " framework!", "success");
-    }, 450);
+    }
   };
 
   // Keyboard shortcut listener (Ctrl + Enter / Cmd + Enter)
@@ -361,6 +378,29 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
             <Image size={13} />
             Midjourney
           </button>
+        </div>
+
+        {/* Center: Live Engine Indicator */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '5px 12px',
+          borderRadius: 'var(--radius-full)',
+          background: isGroqConfigured() ? 'rgba(16, 185, 129, 0.1)' : 'rgba(59, 130, 246, 0.08)',
+          border: `1px solid ${isGroqConfigured() ? 'rgba(16, 185, 129, 0.3)' : 'var(--border-blue)'}`,
+          fontSize: '0.75rem',
+          color: isGroqConfigured() ? '#34d399' : 'var(--blue-light)',
+          fontWeight: 600
+        }}>
+          <span style={{
+            width: '7px',
+            height: '7px',
+            borderRadius: '50%',
+            background: isGroqConfigured() ? '#10b981' : '#38bdf8',
+            boxShadow: isGroqConfigured() ? '0 0 8px #10b981' : '0 0 6px #38bdf8'
+          }} />
+          <span>{result?.engine || (isGroqConfigured() ? "Groq Live AI (Llama 3.3 / DeepSeek R1)" : "Cognitive Heuristics Engine")}</span>
         </div>
 
         {/* Right: Target Model Selection */}

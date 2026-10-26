@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { 
   Bookmark, Search, Copy, Check, Trash2, Download, 
-  ExternalLink, Sparkles, BookOpen, Lock, Unlock, CheckCircle2 
+  ExternalLink, Sparkles, BookOpen, Lock, Unlock, CheckCircle2,
+  Cloud, CloudUpload, CloudDownload, RefreshCw, Mail
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { savePromptToCloud, fetchUserPrompts, isSupabaseConfigured } from '../utils/supabase';
 
 export function PromptLibrary({ 
   savedPrompts, 
   unlockedProducts = [], 
   onDeletePrompt, 
   onSelectPrompt, 
+  onMergePrompts,
   onNotify 
 }) {
   const [activeTab, setActiveTab] = useState("saved"); // 'saved' | 'purchased'
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedId, setCopiedId] = useState(null);
+
+  // Cloud Sync State
+  const [showSyncBar, setShowSyncBar] = useState(false);
+  const [syncEmail, setSyncEmail] = useState(() => {
+    return typeof window !== 'undefined' ? (localStorage.getItem('masterprompt_user_email') || '') : '';
+  });
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const filteredPrompts = savedPrompts.filter((item) => {
     return item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -81,6 +91,60 @@ export function PromptLibrary({
     onNotify("Exported your entire prompt vault to JSON!", "success");
   };
 
+  const handleSyncWithCloud = async () => {
+    if (!syncEmail.trim() || !syncEmail.includes('@')) {
+      onNotify("Please enter a valid email to sync with Supabase!", "red");
+      return;
+    }
+    localStorage.setItem('masterprompt_user_email', syncEmail.trim());
+
+    if (!isSupabaseConfigured()) {
+      onNotify("Supabase keys not yet configured in .env. Prompts saved safely in local storage!", "blue");
+      setShowSyncBar(false);
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const res = await fetchUserPrompts(syncEmail);
+      if (res.success && res.prompts && res.prompts.length > 0) {
+        const formatted = res.prompts.map(p => ({
+          id: p.id,
+          title: p.title,
+          original: p.content,
+          optimized: p.content,
+          model: p.target_model,
+          framework: p.framework,
+          date: new Date(p.created_at).toLocaleDateString(),
+          isCloudSynced: true
+        }));
+        if (onMergePrompts) onMergePrompts(formatted);
+        onNotify(`Synced ${res.prompts.length} prompts from Supabase cloud!`, "success");
+        setShowSyncBar(false);
+      } else {
+        // Backup local prompts to cloud
+        let count = 0;
+        for (const p of savedPrompts) {
+          await savePromptToCloud({
+            email: syncEmail,
+            title: p.title,
+            content: p.optimized || p.original,
+            framework: p.framework || 'STAR',
+            targetModel: p.model || 'ChatGPT 4o'
+          });
+          count++;
+        }
+        onNotify(`Backed up ${count} local prompts to Supabase cloud!`, "success");
+        setShowSyncBar(false);
+      }
+    } catch (err) {
+      console.error("Sync error:", err);
+      onNotify("Cloud sync error. Please check Supabase connection.", "red");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <section id="prompt-library" style={{ marginBottom: '80px' }}>
       {/* Header */}
@@ -139,39 +203,94 @@ export function PromptLibrary({
         padding: '16px 20px',
         marginBottom: '28px',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
         gap: '14px'
       }}>
-        {/* Search Input */}
-        <div className="search-bar-wrap" style={{ position: 'relative', flex: 1, minWidth: '180px', width: '100%' }}>
-          <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-          <input
-            type="text"
-            placeholder={activeTab === 'saved' ? "Search your saved prompts..." : "Search unlocked digital products..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input-field"
-            style={{
-              paddingLeft: '36px',
-              fontSize: '0.85rem',
-              paddingTop: '8px',
-              paddingBottom: '8px'
-            }}
-          />
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '14px'
+        }}>
+          {/* Search Input */}
+          <div className="search-bar-wrap" style={{ position: 'relative', flex: 1, minWidth: '180px', width: '100%' }}>
+            <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            <input
+              type="text"
+              placeholder={activeTab === 'saved' ? "Search your saved prompts..." : "Search unlocked digital products..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input-field"
+              style={{
+                paddingLeft: '36px',
+                fontSize: '0.85rem',
+                paddingTop: '8px',
+                paddingBottom: '8px'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            {activeTab === 'saved' && (
+              <>
+                <button
+                  onClick={() => setShowSyncBar(!showSyncBar)}
+                  className="btn btn-blue"
+                  style={{ fontSize: '0.85rem', padding: '8px 14px' }}
+                >
+                  <Cloud size={15} />
+                  Supabase Sync
+                </button>
+
+                <button
+                  onClick={handleExportAllPrompts}
+                  disabled={savedPrompts.length === 0}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.85rem', padding: '8px 14px', border: '1px solid var(--border-blue)' }}
+                >
+                  <Download size={15} color="var(--blue-light)" />
+                  Export JSON
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
-        {activeTab === 'saved' && (
-          <button
-            onClick={handleExportAllPrompts}
-            disabled={savedPrompts.length === 0}
-            className="btn btn-secondary"
-            style={{ fontSize: '0.85rem', padding: '8px 16px', border: '1px solid var(--border-blue)' }}
-          >
-            <Download size={15} color="var(--blue-light)" />
-            Export Prompts ({savedPrompts.length})
-          </button>
+        {/* Expandable Supabase Cloud Sync Bar */}
+        {showSyncBar && (
+          <div style={{
+            background: 'var(--bg-surface-elevated)',
+            padding: '12px 14px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-blue)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            flexWrap: 'wrap'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+              <Mail size={14} color="var(--blue-light)" />
+              <span>Cloud Account Email:</span>
+            </div>
+            <input
+              type="email"
+              placeholder="your-email@example.com"
+              value={syncEmail}
+              onChange={(e) => setSyncEmail(e.target.value)}
+              className="input-field"
+              style={{ flex: 1, minWidth: '180px', fontSize: '0.85rem', padding: '6px 12px' }}
+            />
+            <button
+              onClick={handleSyncWithCloud}
+              disabled={isSyncing}
+              className="btn btn-blue"
+              style={{ fontSize: '0.825rem', padding: '7px 14px' }}
+            >
+              <RefreshCw size={14} className={isSyncing ? "spinning" : ""} />
+              {isSyncing ? "Syncing..." : "Sync Prompts"}
+            </button>
+          </div>
         )}
       </div>
 

@@ -2,20 +2,28 @@ import React, { useState } from 'react';
 import { 
   X, MessageSquare, Copy, Check, ShieldCheck, CreditCard, 
   Building2, ExternalLink, Key, Download, CheckCircle2, 
-  AlertCircle, Sparkles, BookOpen, Lock, Unlock, Wallet 
+  AlertCircle, Sparkles, BookOpen, Lock, Unlock, Wallet, Mail
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { BANK_ACCOUNTS, generateOrderSecurity, verifyOrderUnlock } from '../utils/orderSecurity';
+import { recordOrder, verifyOrderWithCloud } from '../utils/supabase';
+import { sendOrderReceiptEmail } from '../utils/emailService';
 
 export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockSuccess, onNotify }) {
   const [selectedBankKey, setSelectedBankKey] = useState('opay');
   const [copiedBank, setCopiedBank] = useState(false);
   const [orderRef] = useState(() => "PO-" + Math.floor(100000 + Math.random() * 900000));
   
+  // Customer Delivery Info
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [emailError, setEmailError] = useState("");
+
   // Verification State
   const [unlockCodeInput, setUnlockCodeInput] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [verifyError, setVerifyError] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const selectedBank = BANK_ACCOUNTS[selectedBankKey];
   const totalNGN = items.reduce((sum, item) => sum + item.priceNGN * (item.quantity || 1), 0);
@@ -35,10 +43,44 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
     setTimeout(() => setCopiedBank(false), 2500);
   };
 
-  const handleLaunchWhatsApp = () => {
+  const handleLaunchWhatsApp = async () => {
+    setEmailError("");
+    if (!customerEmail.trim() || !customerEmail.includes('@')) {
+      setEmailError("Please enter your email address so we can send your digital receipt and download tokens.");
+      onNotify("Please enter your email for delivery!", "red");
+      return;
+    }
+
+    // 1. Record order in Supabase Cloud
+    recordOrder({
+      orderRef,
+      customerEmail,
+      customerName,
+      items,
+      totalNGN,
+      totalUSD,
+      currency,
+      unlockCode: expectedUnlockCode
+    });
+
+    // 2. Dispatch automated email receipt
+    sendOrderReceiptEmail({
+      customerEmail,
+      customerName,
+      orderRef,
+      unlockCode: expectedUnlockCode,
+      items,
+      totalNGN,
+      totalUSD,
+      currency
+    });
+
+    // 3. Assemble clean WhatsApp message (WITHOUT leaking unlock code)
     let message = `*NEW ORDER - MASTER PROMPT STUDIO*\n`;
     message += `🧾 *Order Ref:* #${orderRef}\n`;
-    message += `📅 *Date:* ${new Date().toLocaleDateString()}\n\n`;
+    message += `📅 *Date:* ${new Date().toLocaleDateString()}\n`;
+    message += `👤 *Customer Name:* ${customerName || 'Customer'}\n`;
+    message += `📧 *Delivery Email:* ${customerEmail}\n\n`;
     message += `📦 *Items Ordered:*\n`;
     
     items.forEach((item, idx) => {
@@ -50,14 +92,8 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
 
     message += `\n💰 *Total Amount:* ₦${totalNGN.toLocaleString()} (or $${totalUSD.toFixed(2)})\n`;
     message += `🏦 *Payment Sent To:* ${selectedBank.bankName}\n`;
-    message += `💳 *Account Number:* ${selectedBank.accountNumber}\n`;
-    message += `👤 *Account Name:* ${selectedBank.accountName}\n\n`;
-    message += `I have made the transfer and attached my payment receipt/screenshot above. Please confirm my payment and send my unlock code!\n\n`;
-    message += `------------------------------------------\n`;
-    message += `🔐 *FOR SAMUEL OMOTOSO ONLY (AFTER VERIFYING PAYMENT):*\n`;
-    message += `Customer Unlock Code: *${expectedUnlockCode}*\n`;
-    message += `(Reply to the customer with this code to grant instant access)\n`;
-    message += `------------------------------------------`;
+    message += `💳 *Account Number:* ${selectedBank.accountNumber}\n\n`;
+    message += `I have transferred the payment and attached my proof/screenshot above. Please confirm payment for Order #${orderRef}!\n`;
 
     const encoded = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${whatsAppPhone}?text=${encoded}`;
@@ -73,31 +109,40 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
     window.open(whatsappUrl, '_blank');
   };
 
-  const handleVerifyCode = (e) => {
+  const handleVerifyCode = async (e) => {
     e?.preventDefault();
     setVerifyError("");
 
     if (!unlockCodeInput.trim()) {
-      setVerifyError("Please enter the unlock code you received from Samuel Omotoso on WhatsApp.");
+      setVerifyError("Please enter the unlock code you received from Samuel Omotoso or in your receipt email.");
       return;
     }
 
-    const isValid = verifyOrderUnlock(orderRef, unlockCodeInput);
-    if (isValid) {
-      setIsUnlocked(true);
-      confetti({
-        particleCount: 80,
-        spread: 90,
-        origin: { y: 0.6 },
-        colors: ['#10b981', '#3b82f6', '#ef4444', '#f59e0b']
-      });
-      onNotify("Payment verified! Your products are unlocked and ready to download.", "success");
-      if (onUnlockSuccess) {
-        onUnlockSuccess(items);
+    setIsVerifying(true);
+
+    try {
+      // Check cloud verification first, fallback to mathematical hash
+      const cloudResult = await verifyOrderWithCloud(orderRef, unlockCodeInput);
+      const isLocalValid = verifyOrderUnlock(orderRef, unlockCodeInput);
+
+      if (cloudResult.verified || isLocalValid) {
+        setIsUnlocked(true);
+        confetti({
+          particleCount: 80,
+          spread: 90,
+          origin: { y: 0.6 },
+          colors: ['#10b981', '#3b82f6', '#ef4444', '#f59e0b']
+        });
+        onNotify("Payment verified! Your products are unlocked and ready to download.", "success");
+        if (onUnlockSuccess) {
+          onUnlockSuccess(items);
+        }
+      } else {
+        setVerifyError("Invalid unlock code for this order. Please check the code sent to your email or WhatsApp.");
+        onNotify("Verification failed. Check your unlock code.", "red");
       }
-    } else {
-      setVerifyError("Invalid unlock code for this specific order. Please verify the code sent by Samuel on WhatsApp.");
-      onNotify("Verification failed. Check your unlock code.", "red");
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -209,10 +254,55 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
         {/* IF NOT UNLOCKED: Show Bank Selection & Transfer Details */}
         {!isUnlocked ? (
           <>
-            {/* Step 1: Select Bank Gateway (OPAY vs GTB) */}
+            {/* Step 1: Customer Delivery & Receipt Email */}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.825rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <Mail size={14} color="var(--blue-light)" />
+                1. Delivery & Receipt Email (Required):
+              </label>
+
+              <div className="form-row-mobile" style={{ gap: '10px' }}>
+                <input
+                  type="email"
+                  placeholder="your-email@example.com (To receive unlock receipt)"
+                  value={customerEmail}
+                  onChange={(e) => {
+                    setCustomerEmail(e.target.value);
+                    setEmailError("");
+                  }}
+                  className="input-field"
+                  style={{
+                    flex: 1.4,
+                    minHeight: '48px',
+                    padding: '12px 14px',
+                    borderColor: emailError ? 'var(--red-primary)' : 'var(--border-subtle)'
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Your Name (Optional)"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="input-field"
+                  style={{
+                    flex: 1,
+                    minHeight: '48px',
+                    padding: '12px 14px'
+                  }}
+                />
+              </div>
+              {emailError && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--red-light)', fontSize: '0.8rem', marginTop: '6px' }}>
+                  <AlertCircle size={14} />
+                  <span>{emailError}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Step 2: Select Bank Gateway (OPAY vs GTB) */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Select Preferred Payment Gateway:
+                2. Select Preferred Payment Gateway:
               </label>
 
               <div className="form-row-mobile">
@@ -342,7 +432,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
               </div>
             </div>
 
-            {/* Action 1: Notify Samuel Omotoso via WhatsApp */}
+            {/* Action 3: Notify Samuel Omotoso via WhatsApp */}
             <button
               onClick={handleLaunchWhatsApp}
               className="btn btn-whatsapp"
@@ -355,11 +445,11 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
               }}
             >
               <MessageSquare size={20} />
-              1. I Have Paid — Notify Samuel on WhatsApp (+2348034710699)
+              3. I Have Paid — Send Receipt to Samuel on WhatsApp
               <ExternalLink size={16} />
             </button>
 
-            {/* Step 2: Enter Order-Bound Unlock Code */}
+            {/* Step 4: Enter Order-Bound Unlock Code */}
             <div style={{
               background: 'var(--bg-surface-elevated)',
               borderRadius: 'var(--radius-md)',
@@ -369,11 +459,11 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Key size={18} color="var(--blue-light)" />
                 <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                  2. Enter Your Single-Use Unlock Code
+                  4. Enter Your Single-Use Unlock Code
                 </h4>
               </div>
               <p style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 }}>
-                After verifying your payment receipt, Samuel will reply to you on WhatsApp with your unique unlock code (e.g., <code>SO-XXXX</code>). Paste it below to unlock your downloads:
+                After confirming your bank transfer, your unlock code will be sent to your email and WhatsApp (e.g., <code>SO-XXXX</code>). Paste it below to unlock your downloads:
               </p>
 
               <form onSubmit={handleVerifyCode} className="form-vertical-mobile">

@@ -210,6 +210,14 @@ Output: Under 90 words per email, no pleasantry fluff.`
     setSavedPrompts(prev => [promptItem, ...prev]);
   };
 
+  const handleMergePrompts = (cloudPrompts) => {
+    setSavedPrompts(prev => {
+      const existingIds = new Set(prev.map(p => p.id));
+      const newItems = cloudPrompts.filter(p => !existingIds.has(p.id));
+      return [...newItems, ...prev];
+    });
+  };
+
   const handleDeletePrompt = (id) => {
     setSavedPrompts(prev => prev.filter(p => p.id !== id));
     notify("Prompt removed from library", "red");
@@ -313,6 +321,7 @@ Output: Under 90 words per email, no pleasantry fluff.`
           savedPrompts={savedPrompts}
           unlockedProducts={unlockedProducts}
           onDeletePrompt={handleDeletePrompt}
+          onMergePrompts={handleMergePrompts}
           onNotify={notify}
         />
       </main>
