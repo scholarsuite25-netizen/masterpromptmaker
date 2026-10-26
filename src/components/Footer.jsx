@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, MessageSquare, Building2, ShieldCheck, Heart } from 'lucide-react';
 
-export function Footer({ setActiveTab, scrollToSection, onOpenLegal, onOpenAdmin }) {
+export function Footer({ setActiveTab, scrollToSection, onOpenLegal, onOpenAdmin, onNavigateView }) {
   const handleNav = (id, tab) => {
     if (scrollToSection) {
       scrollToSection(id, tab);
@@ -140,6 +140,22 @@ export function Footer({ setActiveTab, scrollToSection, onOpenLegal, onOpenAdmin
                 My Library
               </button>
             </li>
+            <li>
+              <button 
+                onClick={() => onNavigateView && onNavigateView('blog')}
+                style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', padding: 0 }}
+              >
+                Knowledge Hub & Blog
+              </button>
+            </li>
+            <li>
+              <button 
+                onClick={() => onNavigateView && onNavigateView('dashboard')}
+                style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', padding: 0 }}
+              >
+                Creator Hub (User Dashboard)
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -194,7 +210,7 @@ export function Footer({ setActiveTab, scrollToSection, onOpenLegal, onOpenAdmin
           </button>
           <span>•</span>
           <button
-            onClick={() => onOpenAdmin && onOpenAdmin()}
+            onClick={() => onNavigateView ? onNavigateView('admin') : (onOpenAdmin && onOpenAdmin())}
             style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600 }}
           >
             🔐 Samuel Omotoso Admin Portal

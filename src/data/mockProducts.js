@@ -1,5 +1,43 @@
 // Master Prompt Studio - Curated Storefront for All Manner of Digital Products
 export const digitalProducts = [
+  // 0. Flagship Product Suite
+  {
+    id: "suite-content-factory-standalone",
+    title: "Autonomous 30-Mode Content Factory (Standalone Suite + Playbook)",
+    type: "software",
+    category: "Software & Systems",
+    subtitle: "Complete Offline Production Studio + High-Ticket Monetization Masterclass",
+    badge: "👑 Flagship Suite",
+    badgeColor: "gold",
+    priceNGN: 35000,
+    priceUSD: 49.00,
+    originalPriceNGN: 95000,
+    originalPriceUSD: 149.00,
+    rating: 5.0,
+    reviewsCount: 412,
+    pages: "Standalone HTML5 Studio App + 65-Page PDF Masterclass",
+    description: "The crown jewel of Master Prompt Studio. Includes the complete, self-contained offline software application running all 30 content creation modes with zero server fees, plus the comprehensive monetization playbook on how to build and sell $5,000/mo digital assets.",
+    features: [
+      "Offline Standalone Software Studio (Runs in Any Web Browser Forever)",
+      "All 30 Content Creation Engines (eBooks, Courses, Keynotes, Scripts)",
+      "Zero Subscription or Recurring Hosting Costs (Lifetime License)",
+      "Comprehensive Operations & Monetization PDF Playbook by Samuel Omotoso",
+      "Instant 1-Click Formatted PDF & Markdown Export",
+      "Priority VIP Creator WhatsApp Support Line (+2348034710699)"
+    ],
+    sampleExcerpt: {
+      chapter: "Flagship Suite Deliverable Archive",
+      content: `# Autonomous 30-Mode Content Factory (Standalone Suite)
+Included in this official package:
+1. master-content-factory-standalone.html (Full Desktop/Mobile Software Studio)
+2. Master-Content-Factory-Operations-Playbook.pdf (Full Monetization Course)
+3. Commercial Lifetime License Certificate
+
+Engineered by Samuel B. Omotoso for high-yield creators.`
+    },
+    tags: ["Software", "Content Factory", "Standalone", "Flagship", "Playbook"]
+  },
+
   // 1. eBooks & Guides
   {
     id: "ebook-prompt-bible",
@@ -445,6 +483,7 @@ Upon full and final receipt of payment for the Services rendered, the Contractor
 
 export const shopCategories = [
   "All Products",
+  "Software & Systems",
   "eBooks & Guides",
   "Prompt Vaults",
   "Notion & Productivity",

@@ -122,3 +122,43 @@ create policy "Anyone can submit speaker inquiry"
 create policy "Admin can view speaker inquiries" 
     on public.speaking_inquiries for select 
     using (auth.role() = 'authenticated');
+
+-- ==============================================================================
+-- 5. BLOG POSTS TABLE (For CMS & Public Knowledge Hub)
+-- ==============================================================================
+create table if not exists public.blog_posts (
+    id uuid default gen_random_uuid() primary key,
+    title text not null,
+    slug text unique not null,
+    excerpt text,
+    content text not null,
+    category text default 'Prompt Engineering',
+    cover_image text,
+    author_name text default 'Samuel B. Omotoso',
+    read_time text default '5 min read',
+    is_published boolean default true,
+    views_count integer default 0,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS for blog_posts
+alter table public.blog_posts enable row level security;
+
+-- Public can read published blog posts
+create policy "Public can view published blog posts"
+    on public.blog_posts for select
+    using (is_published = true);
+
+-- Anyone authenticated can manage blog posts (or fallback open policy for demo)
+create policy "Allow insert blog posts"
+    on public.blog_posts for insert
+    with check (true);
+
+create policy "Allow update blog posts"
+    on public.blog_posts for update
+    using (true);
+
+create policy "Allow delete blog posts"
+    on public.blog_posts for delete
+    using (true);

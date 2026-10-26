@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, ShoppingBag, BookOpen, Bookmark, Sun, Moon, 
-  MessageSquare, Zap, SlidersHorizontal, Mic, Menu, X, ArrowRight, User, LogIn 
+  MessageSquare, Zap, SlidersHorizontal, Mic, Menu, X, ArrowRight, User, LogIn, LayoutDashboard
 } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../utils/supabase';
 import { AuthModal } from './AuthModal';
 
-export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme, onNotify }) {
+export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme, onNotify, onNavigateView, currentView = 'app' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -50,12 +50,29 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
     }
   };
 
+  const handleItemClick = (item) => {
+    setMobileMenuOpen(false);
+    if (item.view) {
+      if (onNavigateView) onNavigateView(item.view);
+      return;
+    }
+    if (currentView !== 'app') {
+      if (onNavigateView) onNavigateView('app');
+      setTimeout(() => {
+        scrollTo(item.id, item.tab);
+      }, 120);
+    } else {
+      scrollTo(item.id, item.tab);
+    }
+  };
+
   const navItems = [
     { id: 'optimizer-workbench', tab: 'optimizer', label: 'Prompt Studio', icon: Zap },
     { id: 'content-factory-studio', tab: 'factory', label: 'Content Factory', icon: SlidersHorizontal },
     { id: 'digital-shop', tab: 'shop', label: 'Digital Store', icon: ShoppingBag },
     { id: 'speaking-inquiry', tab: 'speaking', label: 'Speaker Booking', icon: Mic },
-    { id: 'prompt-library', tab: 'library', label: 'My Library', icon: Bookmark },
+    { view: 'blog', label: 'Blog', icon: BookOpen },
+    { view: 'dashboard', label: 'Creator Hub', icon: LayoutDashboard }
   ];
 
   return (
@@ -81,7 +98,10 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
       }}>
         {/* Brand Logo */}
         <div 
-          onClick={() => scrollTo('top', 'optimizer')}
+          onClick={() => {
+            if (onNavigateView) onNavigateView('app');
+            scrollTo('top', 'optimizer');
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -129,11 +149,11 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
         }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.tab;
+            const isActive = item.view ? currentView === item.view : (currentView === 'app' && activeTab === item.tab);
             return (
               <button
-                key={item.id}
-                onClick={() => scrollTo(item.id, item.tab)}
+                key={item.id || item.view}
+                onClick={() => handleItemClick(item)}
                 className="btn"
                 style={{
                   padding: '7px 14px',
@@ -287,11 +307,11 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
         }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = activeTab === item.tab;
+            const isActive = item.view ? currentView === item.view : (currentView === 'app' && activeTab === item.tab);
             return (
               <div
-                key={item.id}
-                onClick={() => scrollTo(item.id, item.tab)}
+                key={item.id || item.view}
+                onClick={() => handleItemClick(item)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',

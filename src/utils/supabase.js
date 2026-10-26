@@ -269,3 +269,80 @@ export async function fetchSpeakingInquiries() {
     return { success: false, error: err.message, inquiries: [] };
   }
 }
+
+/**
+ * Fetch all published blog posts (or all for admin)
+ */
+export async function fetchBlogPosts(includeUnpublished = false) {
+  if (!isSupabaseConfigured()) {
+    return { success: false, posts: [] };
+  }
+
+  try {
+    let query = supabase
+      .from('blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!includeUnpublished) {
+      query = query.eq('is_published', true);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return { success: true, posts: data || [] };
+  } catch (err) {
+    console.warn('[Supabase] Error fetching blog posts:', err.message);
+    return { success: false, error: err.message, posts: [] };
+  }
+}
+
+/**
+ * Create or update a blog post
+ */
+export async function upsertBlogPost(postData) {
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: 'Database not configured' };
+  }
+
+  try {
+    const payload = {
+      ...postData,
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .upsert(payload)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, post: data };
+  } catch (err) {
+    console.error('[Supabase] Error saving blog post:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Delete a blog post
+ */
+export async function deleteBlogPost(postId) {
+  if (!isSupabaseConfigured()) {
+    return { success: false };
+  }
+
+  try {
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', postId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    console.error('[Supabase] Error deleting blog post:', err.message);
+    return { success: false, error: err.message };
+  }
+}

@@ -16,6 +16,9 @@ const CheckoutModal = lazy(() => import('./components/CheckoutModal').then(m => 
 const ProductPreviewModal = lazy(() => import('./components/ProductPreviewModal').then(m => ({ default: m.ProductPreviewModal })));
 const AdminDrawer = lazy(() => import('./components/AdminDrawer').then(m => ({ default: m.AdminDrawer })));
 const LegalModal = lazy(() => import('./components/LegalModals').then(m => ({ default: m.LegalModal })));
+const UserDashboard = lazy(() => import('./components/UserDashboard').then(m => ({ default: m.UserDashboard })));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const BlogView = lazy(() => import('./components/BlogView').then(m => ({ default: m.BlogView })));
 
 function SectionFallback() {
   return (
@@ -43,6 +46,39 @@ function SectionFallback() {
 
 export function App() {
   const [activeTab, setActiveTab] = useState('optimizer');
+  const [currentView, setCurrentView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get('view');
+      if (['admin', 'dashboard', 'blog'].includes(v)) return v;
+    }
+    return 'app';
+  });
+
+  const navigateToView = (viewName) => {
+    setCurrentView(viewName);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (viewName === 'app') {
+        url.searchParams.delete('view');
+      } else {
+        url.searchParams.set('view', viewName);
+      }
+      window.history.pushState({}, '', url.toString());
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get('view') || 'app';
+      setCurrentView(v);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const [theme, setTheme] = useState(() => localStorage.getItem('po_theme') || 'dark');
   const [currency, setCurrency] = useState('NGN');
   
@@ -303,62 +339,102 @@ Output: Under 90 words per email, no pleasantry fluff.`
         theme={theme}
         toggleTheme={toggleTheme}
         onNotify={notify}
+        onNavigateView={navigateToView}
+        currentView={currentView}
       />
 
-      {/* Main Content Area */}
-      <main className="app-container" style={{ flex: 1 }}>
-        {/* Hero Section */}
-        <Hero
-          onStartOptimizing={() => scrollToSection('optimizer-workbench', 'optimizer')}
-          onExploreShop={() => scrollToSection('digital-shop', 'shop')}
-          onOpenFactory={() => scrollToSection('content-factory-studio', 'factory')}
-          onOpenSpeaking={() => scrollToSection('speaking-inquiry', 'speaking')}
-        />
-
-        {/* 1. AI Prompt Engineering Workbench (Immediate First-Paint) */}
-        <PromptWorkbench
-          onSavePrompt={handleSavePrompt}
-          onNotify={notify}
-        />
-
-        {/* 2. Below-the-fold modules loaded with Suspense for ultra-fast startup */}
+      {/* Main Content Area: Routed View Switcher */}
+      {currentView === 'admin' ? (
         <Suspense fallback={<SectionFallback />}>
-          {/* Autonomous 30-Mode Digital Content Factory */}
-          <ContentFactoryStudio
-            onNotify={notify}
-          />
-
-          {/* Prompt Templates Gallery */}
-          <TemplatesGallery
-            onSelectTemplate={handleSelectTemplate}
-            onNotify={notify}
-          />
-
-          {/* Digital Creator Shop & Marketplace */}
-          <DigitalShop
-            onAddToCart={handleAddToCart}
-            onOpenPreview={(product) => setPreviewProduct(product)}
-            onDirectBuy={handleDirectBuy}
-            currency={currency}
-            setCurrency={setCurrency}
-            onNotify={notify}
-          />
-
-          {/* Keynote Speaking & Executive Workshop Inquiry */}
-          <SpeakingInquiry
-            onNotify={notify}
-          />
-
-          {/* Saved Prompts & Unlocked Digital Library */}
-          <PromptLibrary
-            savedPrompts={savedPrompts}
-            unlockedProducts={unlockedProducts}
-            onDeletePrompt={handleDeletePrompt}
-            onMergePrompts={handleMergePrompts}
+          <AdminDashboard
+            onBackToApp={() => navigateToView('app')}
             onNotify={notify}
           />
         </Suspense>
-      </main>
+      ) : currentView === 'dashboard' ? (
+        <Suspense fallback={<SectionFallback />}>
+          <UserDashboard
+            onBackToApp={() => navigateToView('app')}
+            unlockedProducts={unlockedProducts}
+            savedPrompts={savedPrompts}
+            onDeletePrompt={handleDeletePrompt}
+            onNotify={notify}
+            onNavigateToShop={() => {
+              navigateToView('app');
+              setTimeout(() => scrollToSection('digital-shop', 'shop'), 150);
+            }}
+          />
+        </Suspense>
+      ) : currentView === 'blog' ? (
+        <Suspense fallback={<SectionFallback />}>
+          <BlogView
+            onBackToApp={() => navigateToView('app')}
+            onOpenWorkbench={() => {
+              navigateToView('app');
+              setTimeout(() => scrollToSection('optimizer-workbench', 'optimizer'), 150);
+            }}
+            onOpenShop={() => {
+              navigateToView('app');
+              setTimeout(() => scrollToSection('digital-shop', 'shop'), 150);
+            }}
+            onNotify={notify}
+          />
+        </Suspense>
+      ) : (
+        <main className="app-container" style={{ flex: 1 }}>
+          {/* Hero Section */}
+          <Hero
+            onStartOptimizing={() => scrollToSection('optimizer-workbench', 'optimizer')}
+            onExploreShop={() => scrollToSection('digital-shop', 'shop')}
+            onOpenFactory={() => scrollToSection('content-factory-studio', 'factory')}
+            onOpenSpeaking={() => scrollToSection('speaking-inquiry', 'speaking')}
+          />
+
+          {/* 1. AI Prompt Engineering Workbench (Immediate First-Paint) */}
+          <PromptWorkbench
+            onSavePrompt={handleSavePrompt}
+            onNotify={notify}
+          />
+
+          {/* 2. Below-the-fold modules loaded with Suspense for ultra-fast startup */}
+          <Suspense fallback={<SectionFallback />}>
+            {/* Autonomous 30-Mode Digital Content Factory */}
+            <ContentFactoryStudio
+              onNotify={notify}
+            />
+
+            {/* Prompt Templates Gallery */}
+            <TemplatesGallery
+              onSelectTemplate={handleSelectTemplate}
+              onNotify={notify}
+            />
+
+            {/* Digital Creator Shop & Marketplace */}
+            <DigitalShop
+              onAddToCart={handleAddToCart}
+              onOpenPreview={(product) => setPreviewProduct(product)}
+              onDirectBuy={handleDirectBuy}
+              currency={currency}
+              setCurrency={setCurrency}
+              onNotify={notify}
+            />
+
+            {/* Keynote Speaking & Executive Workshop Inquiry */}
+            <SpeakingInquiry
+              onNotify={notify}
+            />
+
+            {/* Saved Prompts & Unlocked Digital Library */}
+            <PromptLibrary
+              savedPrompts={savedPrompts}
+              unlockedProducts={unlockedProducts}
+              onDeletePrompt={handleDeletePrompt}
+              onMergePrompts={handleMergePrompts}
+              onNotify={notify}
+            />
+          </Suspense>
+        </main>
+      )}
 
       {/* Floating 24/7 WhatsApp Quick Help & Feedback Widget (Bottom Left) */}
       <aside 
@@ -473,7 +549,8 @@ Output: Under 90 words per email, no pleasantry fluff.`
         setActiveTab={setActiveTab}
         scrollToSection={scrollToSection}
         onOpenLegal={(type) => setLegalModalType(type)}
-        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenAdmin={() => navigateToView('admin')}
+        onNavigateView={navigateToView}
       />
     </div>
   );
