@@ -158,6 +158,62 @@ export async function verifyOrderWithCloud(orderRef, inputCode) {
 }
 
 /**
+ * Fetch all digital orders (for Samuel Omotoso Admin drawer)
+ */
+export async function fetchAllOrders() {
+  if (!isSupabaseConfigured()) {
+    // Return mock orders from localStorage if any
+    try {
+      const local = localStorage.getItem('po_pending_orders');
+      return { success: true, orders: local ? JSON.parse(local) : [] };
+    } catch {
+      return { success: true, orders: [] };
+    }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+    return { success: true, orders: data || [] };
+  } catch (err) {
+    console.error('[Supabase] Failed to fetch orders:', err.message);
+    return { success: false, error: err.message, orders: [] };
+  }
+}
+
+/**
+ * Admin action: mark order verified and optionally notify customer
+ */
+export async function verifyOrderAndNotify(orderRef) {
+  if (!isSupabaseConfigured()) {
+    return { success: true, simulated: true };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({
+        status: 'verified',
+        verified_at: new Date().toISOString()
+      })
+      .eq('order_ref', orderRef.trim())
+      .select()
+      .single();
+
+    if (error) throw error;
+    return { success: true, order: data };
+  } catch (err) {
+    console.error('[Supabase] Failed to verify order:', err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+/**
  * Record Keynote Speaker booking inquiry
  */
 export async function recordSpeakingInquiry(inquiryData) {
@@ -188,5 +244,28 @@ export async function recordSpeakingInquiry(inquiryData) {
   } catch (err) {
     console.error('[Supabase] Failed to record speaking inquiry:', err.message);
     return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Fetch Keynote Speaker inquiries (for Samuel Omotoso Admin drawer)
+ */
+export async function fetchSpeakingInquiries() {
+  if (!isSupabaseConfigured()) {
+    return { success: true, inquiries: [] };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('speaking_inquiries')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+    return { success: true, inquiries: data || [] };
+  } catch (err) {
+    console.error('[Supabase] Failed to fetch inquiries:', err.message);
+    return { success: false, error: err.message, inquiries: [] };
   }
 }

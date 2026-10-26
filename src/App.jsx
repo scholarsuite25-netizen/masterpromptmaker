@@ -14,6 +14,8 @@ const PromptLibrary = lazy(() => import('./components/PromptLibrary').then(m => 
 const CartDrawer = lazy(() => import('./components/CartDrawer').then(m => ({ default: m.CartDrawer })));
 const CheckoutModal = lazy(() => import('./components/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
 const ProductPreviewModal = lazy(() => import('./components/ProductPreviewModal').then(m => ({ default: m.ProductPreviewModal })));
+const AdminDrawer = lazy(() => import('./components/AdminDrawer').then(m => ({ default: m.AdminDrawer })));
+const LegalModal = lazy(() => import('./components/LegalModals').then(m => ({ default: m.LegalModal })));
 
 function SectionFallback() {
   return (
@@ -104,6 +106,8 @@ Output: Under 90 words per email, no pleasantry fluff.`
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [checkoutItems, setCheckoutItems] = useState([]);
   const [previewProduct, setPreviewProduct] = useState(null);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [legalModalType, setLegalModalType] = useState(null); // 'terms' | 'privacy' | 'refund'
 
   // Notifications / Toasts
   const [toasts, setToasts] = useState([]);
@@ -431,6 +435,22 @@ Output: Under 90 words per email, no pleasantry fluff.`
             onNotify={notify}
           />
         )}
+
+        {isAdminOpen && (
+          <AdminDrawer
+            isOpen={isAdminOpen}
+            onClose={() => setIsAdminOpen(false)}
+            onNotify={notify}
+          />
+        )}
+
+        {legalModalType && (
+          <LegalModal
+            type={legalModalType}
+            isOpen={Boolean(legalModalType)}
+            onClose={() => setLegalModalType(null)}
+          />
+        )}
       </Suspense>
 
       {/* Toast Notification Container */}
@@ -449,7 +469,12 @@ Output: Under 90 words per email, no pleasantry fluff.`
       </div>
 
       {/* Global Footer */}
-      <Footer setActiveTab={setActiveTab} scrollToSection={scrollToSection} />
+      <Footer
+        setActiveTab={setActiveTab}
+        scrollToSection={scrollToSection}
+        onOpenLegal={(type) => setLegalModalType(type)}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+      />
     </div>
   );
 }

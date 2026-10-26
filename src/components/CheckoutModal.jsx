@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { 
   X, MessageSquare, Copy, Check, ShieldCheck, CreditCard, 
   Building2, ExternalLink, Key, Download, CheckCircle2, 
-  AlertCircle, Sparkles, BookOpen, Lock, Unlock, Wallet, Mail
+  AlertCircle, Sparkles, BookOpen, Lock, Unlock, Wallet, Mail, Printer
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { BANK_ACCOUNTS, generateOrderSecurity, verifyOrderUnlock } from '../utils/orderSecurity';
 import { recordOrder, verifyOrderWithCloud } from '../utils/supabase';
 import { sendOrderReceiptEmail } from '../utils/emailService';
+import { openFormattedPrintableDoc } from '../utils/pdfGenerator';
 
 export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockSuccess, onNotify }) {
   const [selectedBankKey, setSelectedBankKey] = useState('opay');
@@ -174,6 +175,32 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
     link.click();
     URL.revokeObjectURL(url);
     onNotify(`Downloaded full edition of "${item.title}"!`, "success");
+  };
+
+  const handlePrintAsset = (item) => {
+    let fullText = `# ${item.title}\n\n**Category:** ${item.type === 'ebook' ? 'Executive eBook' : 'Master Prompt Vault'}\n**License:** Single Creator Commercial License (Order #${orderRef})\n\n## Overview\n${item.description || item.subtitle || ''}\n\n`;
+    if (item.features && item.features.length > 0) {
+      fullText += `## Core Included Features\n`;
+      item.features.forEach((f, idx) => {
+        fullText += `${idx + 1}. ${f}\n`;
+      });
+      fullText += `\n`;
+    }
+    fullText += `## Deliverable Content\n\n${item.sampleExcerpt?.content || item.sampleExcerpt?.excerpt || "Complete digital release asset."}\n\n---\n*Certified Publication by Master Prompt Studio & Samuel B. Omotoso*`;
+
+    openFormattedPrintableDoc({
+      title: item.title,
+      subtitle: item.type === 'ebook' ? 'Executive eBook Edition' : 'Master Prompt Vault Asset',
+      author: "Samuel B. Omotoso • Master Prompt Studio",
+      badge: `LICENSED ORDER #${orderRef}`,
+      content: fullText,
+      metadata: {
+        "Product Type": item.type === 'ebook' ? 'Digital eBook' : 'Prompt Pack',
+        "Order Ref": `#${orderRef}`,
+        "Status": "Verified & Paid"
+      }
+    });
+    onNotify(`Opened printable edition of "${item.title}"!`, "success");
   };
 
   return (
@@ -581,14 +608,26 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => handleDownloadAsset(item)}
-                    className="btn btn-primary"
-                    style={{ fontSize: '0.85rem', padding: '10px 16px' }}
-                  >
-                    <Download size={16} />
-                    Download Full Edition
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => handlePrintAsset(item)}
+                      className="btn btn-secondary"
+                      style={{ fontSize: '0.85rem', padding: '10px 14px', border: '1px solid var(--border-blue)' }}
+                      title="Read and Print Full Formatted PDF Book"
+                    >
+                      <Printer size={16} color="var(--blue-light)" />
+                      Printable PDF
+                    </button>
+
+                    <button
+                      onClick={() => handleDownloadAsset(item)}
+                      className="btn btn-primary"
+                      style={{ fontSize: '0.85rem', padding: '10px 16px' }}
+                    >
+                      <Download size={16} />
+                      .MD
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

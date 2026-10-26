@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { 
   Bookmark, Search, Copy, Check, Trash2, Download, 
   ExternalLink, Sparkles, BookOpen, Lock, Unlock, CheckCircle2,
-  Cloud, CloudUpload, CloudDownload, RefreshCw, Mail
+  Cloud, CloudUpload, CloudDownload, RefreshCw, Mail, Printer
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { savePromptToCloud, fetchUserPrompts, isSupabaseConfigured } from '../utils/supabase';
+import { openFormattedPrintableDoc } from '../utils/pdfGenerator';
 
 export function PromptLibrary({ 
   savedPrompts, 
@@ -76,6 +77,47 @@ export function PromptLibrary({
     link.click();
     URL.revokeObjectURL(url);
     onNotify(`Downloaded full edition of "${item.title}"!`, "success");
+  };
+
+  const handlePrintAsset = (item) => {
+    let fullText = `# ${item.title}\n\n**Category:** ${item.type === 'ebook' ? 'Executive eBook' : 'Master Prompt Vault'}\n**License:** Single Creator Commercial License\n\n## Overview\n${item.description || item.subtitle || ''}\n\n`;
+    if (item.features && item.features.length > 0) {
+      fullText += `## Core Included Features\n`;
+      item.features.forEach((f, idx) => {
+        fullText += `${idx + 1}. ${f}\n`;
+      });
+      fullText += `\n`;
+    }
+    fullText += `## Deliverable Content\n\n${item.sampleExcerpt?.content || item.sampleExcerpt?.excerpt || "Complete digital release asset."}\n\n---\n*Certified Publication by Master Prompt Studio & Samuel B. Omotoso*`;
+
+    openFormattedPrintableDoc({
+      title: item.title,
+      subtitle: item.type === 'ebook' ? 'Executive eBook Edition' : 'Master Prompt Vault Asset',
+      author: "Samuel B. Omotoso • Master Prompt Studio",
+      badge: "VERIFIED COMMERCIAL ASSET",
+      content: fullText,
+      metadata: {
+        "Product Type": item.type === 'ebook' ? 'Digital eBook' : 'Prompt Pack',
+        "Status": "Unlocked & Verified"
+      }
+    });
+    onNotify(`Opened printable edition of "${item.title}"!`, "success");
+  };
+
+  const handlePrintPrompt = (promptItem) => {
+    openFormattedPrintableDoc({
+      title: promptItem.title || "Engineered Master Prompt",
+      subtitle: `Model: ${(promptItem.model || 'AI').toUpperCase()} • Framework: ${(promptItem.framework || 'STAR').toUpperCase()}`,
+      author: "Samuel B. Omotoso • Master Prompt Studio",
+      badge: "SAVED PROMPT VAULT",
+      content: `### High-Yield Production Prompt\n\`\`\`\n${promptItem.optimized}\n\`\`\``,
+      metadata: {
+        "Target Model": (promptItem.model || 'AI').toUpperCase(),
+        "Cognitive Framework": (promptItem.framework || 'STAR').toUpperCase(),
+        "Saved Date": promptItem.date || new Date().toLocaleDateString()
+      }
+    });
+    onNotify("Opened printable PDF dialog!", "success");
   };
 
   const handleExportAllPrompts = () => {
@@ -375,7 +417,16 @@ export function PromptLibrary({
                     {copiedId === item.id ? "Copied" : "Copy"}
                   </button>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button
+                      onClick={() => handlePrintPrompt(item)}
+                      className="btn btn-secondary"
+                      style={{ fontSize: '0.75rem', padding: '6px 8px' }}
+                      title="Print or Save Formatted PDF"
+                    >
+                      <Printer size={13} color="var(--blue-light)" />
+                    </button>
+
                     <a
                       href={`https://chatgpt.com/?q=${encodeURIComponent(item.optimized)}`}
                       target="_blank"
@@ -473,14 +524,26 @@ export function PromptLibrary({
                     <CheckCircle2 size={14} /> Ready to Download
                   </span>
 
-                  <button
-                    onClick={() => handleDownloadAsset(product)}
-                    className="btn btn-primary"
-                    style={{ fontSize: '0.85rem', padding: '9px 16px' }}
-                  >
-                    <Download size={15} />
-                    Download File
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      onClick={() => handlePrintAsset(product)}
+                      className="btn btn-secondary"
+                      style={{ fontSize: '0.82rem', padding: '8px 12px', border: '1px solid var(--border-blue)' }}
+                      title="Read & Print Formatted PDF Book"
+                    >
+                      <Printer size={14} color="var(--blue-light)" />
+                      Printable PDF
+                    </button>
+
+                    <button
+                      onClick={() => handleDownloadAsset(product)}
+                      className="btn btn-primary"
+                      style={{ fontSize: '0.82rem', padding: '8px 14px' }}
+                    >
+                      <Download size={14} />
+                      .MD
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

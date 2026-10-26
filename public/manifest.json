@@ -1,0 +1,19 @@
+{
+  "name": "Master Prompt Studio",
+  "short_name": "MasterPrompt",
+  "description": "AI Prompt Engineering Suite, Autonomous Content Factory, and Creator Digital Store by Samuel B. Omotoso.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#060913",
+  "theme_color": "#060913",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "developer tools", "utilities", "business"]
+}

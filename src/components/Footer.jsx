@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, MessageSquare, Building2, ShieldCheck, Heart } from 'lucide-react';
 
-export function Footer({ setActiveTab, scrollToSection }) {
+export function Footer({ setActiveTab, scrollToSection, onOpenLegal, onOpenAdmin }) {
   const handleNav = (id, tab) => {
     if (scrollToSection) {
       scrollToSection(id, tab);
@@ -159,7 +159,7 @@ export function Footer({ setActiveTab, scrollToSection }) {
         </div>
       </div>
 
-      {/* Copyright */}
+      {/* Copyright, Legal & Admin Links */}
       <div style={{
         textAlign: 'center',
         paddingTop: '20px',
@@ -167,11 +167,41 @@ export function Footer({ setActiveTab, scrollToSection }) {
         fontSize: '0.8rem',
         color: 'var(--text-muted)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: '6px'
+        gap: '10px'
       }}>
-        <span>© {new Date().getFullYear()} Master Prompt Studio. Built with high precision.</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px' }}>
+          <button
+            onClick={() => onOpenLegal && onOpenLegal('terms')}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.78rem' }}
+          >
+            Terms of Service
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => onOpenLegal && onOpenLegal('privacy')}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.78rem' }}
+          >
+            Privacy Policy (GDPR/NDPR)
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => onOpenLegal && onOpenLegal('refund')}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '0.78rem' }}
+          >
+            Refund & Delivery Policy
+          </button>
+          <span>•</span>
+          <button
+            onClick={() => onOpenAdmin && onOpenAdmin()}
+            style={{ background: 'transparent', border: 'none', color: 'var(--blue-light)', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600 }}
+          >
+            🔐 Samuel Omotoso Admin Portal
+          </button>
+        </div>
+
+        <span>© {new Date().getFullYear()} Master Prompt Studio • Built for creators and developers worldwide.</span>
       </div>
     </footer>
   );

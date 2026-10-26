@@ -2,11 +2,14 @@ import React, { useState } from 'react';
 import { 
   Layers, Search, Sparkles, BookOpen, Mic, GraduationCap, 
   FileText, Globe, Code, Copy, Check, Download, ArrowRight, 
-  RefreshCw, CheckCircle2, ShieldCheck, Terminal, HelpCircle, FileCheck
+  RefreshCw, CheckCircle2, ShieldCheck, Terminal, HelpCircle, FileCheck,
+  Printer, Cpu
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { FACTORY_CATEGORIES, FACTORY_MODES } from '../data/factoryModes';
 import { generateFactoryArtifact, compileMasterSpecPrompt } from '../utils/factoryEngine';
+import { generateFactoryArtifactLive, isGroqConfigured } from '../utils/aiService';
+import { openFormattedPrintableDoc } from '../utils/pdfGenerator';
 
 export function ContentFactoryStudio({ onNotify }) {
   const [selectedCategory, setSelectedCategory] = useState("All Modes");
@@ -23,6 +26,8 @@ export function ContentFactoryStudio({ onNotify }) {
   // Output State
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeOutputTab, setActiveOutputTab] = useState("content"); // 'content' | 'spec'
+  const [engineStatus, setEngineStatus] = useState(() => isGroqConfigured() ? "Groq Live AI (Llama 3.3 70B)" : "Deterministic Factory Engine");
+  const [isLiveAi, setIsLiveAi] = useState(() => isGroqConfigured());
   const [generatedContent, setGeneratedContent] = useState(() => 
     generateFactoryArtifact(FACTORY_MODES[0], {
       title: FACTORY_MODES[0].defaultTitle,
@@ -50,20 +55,34 @@ export function ContentFactoryStudio({ onNotify }) {
     onNotify(`Selected mode: ${mode.name} (${mode.command})`, "blue");
   };
 
-  const handleGenerateContent = () => {
+  const handleGenerateContent = async () => {
     setIsGenerating(true);
-    setTimeout(() => {
-      const output = generateFactoryArtifact(activeMode, {
+    try {
+      const res = await generateFactoryArtifactLive(activeMode, {
         title: titleInput,
         audience: audienceInput,
         theme: themeInput,
         format: selectedFormat,
         additionalNotes: notesInput
       });
-      setGeneratedContent(output);
+      setGeneratedContent(res.content);
+      setEngineStatus(res.engine);
+      setIsLiveAi(res.isLiveAi);
+      onNotify(`Generated ${activeMode.name} via ${res.engine}!`, res.isLiveAi ? "success" : "blue");
+    } catch (err) {
+      console.error('Factory generation error:', err);
+      const fallback = generateFactoryArtifact(activeMode, {
+        title: titleInput,
+        audience: audienceInput,
+        theme: themeInput,
+        format: selectedFormat,
+        additionalNotes: notesInput
+      });
+      setGeneratedContent(fallback);
+      onNotify(`Generated ${activeMode.name} via local engine`, "blue");
+    } finally {
       setIsGenerating(false);
-      onNotify(`Generated ${activeMode.name} artifact!`, "success");
-    }, 450);
+    }
   };
 
   const masterSpec = compileMasterSpecPrompt(activeMode, {
@@ -97,6 +116,23 @@ export function ContentFactoryStudio({ onNotify }) {
     link.click();
     URL.revokeObjectURL(url);
     onNotify(`Downloaded ${filename}!`, "blue");
+  };
+
+  const handlePrintPdf = () => {
+    openFormattedPrintableDoc({
+      title: titleInput || activeMode.name,
+      subtitle: `${activeMode.name} • ${selectedFormat}`,
+      author: "Samuel B. Omotoso • Master Prompt Studio",
+      badge: isLiveAi ? "AI GENERATED • LLAMA 3.3 70B" : "DETERMINISTIC BLUEPRINT",
+      content: activeOutputTab === 'content' ? generatedContent : masterSpec,
+      metadata: {
+        "Mode": activeMode.name,
+        "Target Audience": audienceInput,
+        "Core Theme": themeInput,
+        "Format": selectedFormat
+      }
+    });
+    onNotify("Opened formatted PDF print dialog!", "success");
   };
 
   const wordCount = (activeOutputTab === 'content' ? generatedContent : masterSpec).split(/\s+/).filter(Boolean).length;
@@ -405,28 +441,55 @@ export function ContentFactoryStudio({ onNotify }) {
                 </button>
               </div>
 
-              {/* Stats & Actions */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <span style={{
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                  background: isLiveAi ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.12)',
+                  color: isLiveAi ? '#10b981' : '#60a5fa',
+                  border: isLiveAi ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(59, 130, 246, 0.3)'
+                }}>
+                  {isLiveAi ? <Sparkles size={11} /> : <Cpu size={11} />}
+                  {engineStatus}
+                </span>
+
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  Word Count: <strong style={{ color: 'var(--text-primary)' }}>{wordCount}</strong>
+                  Words: <strong style={{ color: 'var(--text-primary)' }}>{wordCount}</strong>
                 </span>
 
                 <button
                   onClick={() => handleCopy(activeOutputTab === 'content' ? generatedContent : masterSpec, activeOutputTab === 'content' ? 'Artifact' : 'Prompt Spec')}
                   className="btn btn-secondary"
-                  style={{ padding: '6px 12px', fontSize: '0.8rem', border: '1px solid var(--border-blue)' }}
+                  style={{ padding: '6px 10px', fontSize: '0.8rem', border: '1px solid var(--border-blue)' }}
+                  title="Copy to clipboard"
                 >
-                  {copied ? <Check size={14} /> : <Copy size={14} />}
+                  {copied ? <Check size={13} /> : <Copy size={13} />}
                   {copied ? "Copied" : "Copy"}
+                </button>
+
+                <button
+                  onClick={handlePrintPdf}
+                  className="btn btn-secondary"
+                  style={{ padding: '6px 10px', fontSize: '0.8rem', border: '1px solid var(--border-subtle)' }}
+                  title="Open Formatted Printable PDF"
+                >
+                  <Printer size={13} color="var(--blue-light)" />
+                  Printable PDF
                 </button>
 
                 <button
                   onClick={() => handleDownload(activeOutputTab === 'content' ? generatedContent : masterSpec, activeOutputTab === 'content' ? 'DELIVERABLE' : 'SPEC')}
                   className="btn btn-secondary"
-                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                  style={{ padding: '6px 10px', fontSize: '0.8rem' }}
+                  title="Download Markdown file"
                 >
-                  <Download size={14} />
-                  Download
+                  <Download size={13} />
+                  .MD
                 </button>
               </div>
             </div>

@@ -14,6 +14,8 @@ import {
 } from '../utils/promptEngine';
 import { optimizePromptLive, isGroqConfigured } from '../utils/aiService';
 import { sampleWeakPrompts } from '../data/freeTemplates';
+import { isSupabaseConfigured, savePromptToCloud } from '../utils/supabase';
+import { openFormattedPrintableDoc } from '../utils/pdfGenerator';
 
 function escapeHtml(str) {
   if (!str) return '';
@@ -136,11 +138,12 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
     setTimeout(() => setCopied(false), 2200);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!result?.optimized) return;
+    const title = rawPrompt.slice(0, 50) + (rawPrompt.length > 50 ? "..." : "");
     const newSaved = {
       id: "opt-" + Date.now(),
-      title: rawPrompt.slice(0, 50) + (rawPrompt.length > 50 ? "..." : ""),
+      title,
       original: rawPrompt,
       optimized: result.optimized,
       model: selectedModel,
@@ -149,7 +152,26 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
       metrics: result.metrics
     };
     onSavePrompt(newSaved);
-    onNotify("Saved prompt to your personal library!", "success");
+
+    // Auto-sync to Supabase Cloud if configured
+    try {
+      const userEmail = typeof window !== 'undefined' ? localStorage.getItem('masterprompt_user_email') : null;
+      if (userEmail && isSupabaseConfigured()) {
+        savePromptToCloud({
+          email: userEmail,
+          title,
+          content: result.optimized,
+          framework: selectedFramework,
+          targetModel: selectedModel,
+          tags: [selectedFramework, selectedModel]
+        });
+        onNotify("Saved to library & synced to Supabase Cloud!", "success");
+      } else {
+        onNotify("Saved prompt to your personal library!", "success");
+      }
+    } catch {
+      onNotify("Saved prompt to your personal library!", "success");
+    }
   };
 
   // 4-Format Export Engine (Markdown, TXT, JSON, Printable HTML/PDF)
@@ -176,121 +198,22 @@ export function PromptWorkbench({ onSavePrompt, onNotify }) {
       content = `MASTER PROMPT STUDIO EXPORT\n==========================\nModel: ${selectedModel.toUpperCase()}\nFramework: ${selectedFramework.toUpperCase()}\nDate: ${new Date().toLocaleDateString()}\n\nORIGINAL PROMPT:\n----------------\n${rawPrompt}\n\nOPTIMIZED PROMPT:\n-----------------\n${result.optimized}\n\nMETRICS:\n--------\nClarity Score: ${result.metrics.clarityScore}%\nBefore Tokens: ${result.metrics.tokensBefore}\nAfter Tokens: ${result.metrics.tokensAfter}\nYield Improvement: +${result.metrics.improvement}%\n`;
       filename += ".txt";
     } else if (type === 'html' || type === 'pdf') {
-      // Direct Printable HTML Document
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8" />
-              <title>Master Prompt Studio Export - ${escapeHtml(selectedModel.toUpperCase())}</title>
-              <style>
-                body {
-                  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-                  max-width: 800px;
-                  margin: 40px auto;
-                  padding: 20px;
-                  color: #0f172a;
-                  line-height: 1.6;
-                }
-                .header {
-                  border-bottom: 2px solid #e2e8f0;
-                  padding-bottom: 16px;
-                  margin-bottom: 24px;
-                }
-                .badge {
-                  display: inline-block;
-                  padding: 4px 10px;
-                  background: #eff6ff;
-                  color: #1d4ed8;
-                  font-weight: 700;
-                  border-radius: 6px;
-                  font-size: 13px;
-                  border: 1px solid #bfdbfe;
-                }
-                .metrics-grid {
-                  display: grid;
-                  grid-template-columns: repeat(4, 1fr);
-                  gap: 12px;
-                  margin: 20px 0;
-                  padding: 16px;
-                  background: #f8fafc;
-                  border-radius: 8px;
-                  border: 1px solid #e2e8f0;
-                  text-align: center;
-                }
-                .metric-label { font-size: 12px; color: #64748b; text-transform: uppercase; }
-                .metric-val { font-size: 18px; font-weight: 800; color: #0284c7; }
-                pre {
-                  background: #f1f5f9;
-                  border: 1px solid #cbd5e1;
-                  padding: 16px;
-                  border-radius: 8px;
-                  white-space: pre-wrap;
-                  word-break: break-word;
-                  font-family: "JetBrains Mono", Consolas, monospace;
-                  font-size: 13.5px;
-                  line-height: 1.55;
-                }
-                .footer {
-                  margin-top: 40px;
-                  padding-top: 16px;
-                  border-top: 1px solid #e2e8f0;
-                  font-size: 12px;
-                  color: #94a3b8;
-                  display: flex;
-                  justify-content: space-between;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="header">
-                <h1 style="margin:0 0 8px 0; color:#0f172a;">⚡ Master Prompt Studio</h1>
-                <div class="badge">Model: ${escapeHtml(selectedModel.toUpperCase())} • Framework: ${escapeHtml(selectedFramework.toUpperCase())}</div>
-              </div>
-
-              <div class="metrics-grid">
-                <div>
-                  <div class="metric-label">Clarity Score</div>
-                  <div class="metric-val">${result.metrics.clarityScore}%</div>
-                </div>
-                <div>
-                  <div class="metric-label">Tokens Before</div>
-                  <div class="metric-val">${result.metrics.tokensBefore}</div>
-                </div>
-                <div>
-                  <div class="metric-label">Tokens After</div>
-                  <div class="metric-val">${result.metrics.tokensAfter}</div>
-                </div>
-                <div>
-                  <div class="metric-label">Improvement</div>
-                  <div class="metric-val" style="color:#10b981;">+${result.metrics.improvement}%</div>
-                </div>
-              </div>
-
-              <h3 style="color:#475569; margin-bottom: 8px;">Original Raw Prompt:</h3>
-              <pre>${escapeHtml(rawPrompt)}</pre>
-
-              <h3 style="color:#0284c7; margin-top: 24px; margin-bottom: 8px;">Optimized High-Yield Prompt:</h3>
-              <pre style="border: 2px solid #38bdf8; background: #ffffff;">${escapeHtml(result.optimized)}</pre>
-
-              <div class="footer">
-                <span>Exported via Master Prompt Studio • 100% Free AI Engine</span>
-                <span>Date: ${new Date().toLocaleDateString()}</span>
-              </div>
-              <script>
-                window.onload = function() {
-                  window.print();
-                };
-              </script>
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        onNotify("Opened print & PDF export dialog!", "success");
-        return;
-      }
+      // Universal Formatted Printable PDF Document
+      openFormattedPrintableDoc({
+        title: `Optimized Prompt (${selectedModel.toUpperCase()})`,
+        subtitle: `Framework: ${selectedFramework.toUpperCase()} • Tone: ${selectedTone}`,
+        author: "Samuel B. Omotoso • Master Prompt Studio",
+        badge: "VERIFIED HIGH-YIELD PROMPT",
+        content: `### Original Raw Prompt\n\`\`\`\n${rawPrompt}\n\`\`\`\n\n### Optimized Production-Grade Prompt\n\`\`\`\n${result.optimized}\n\`\`\`\n\n### Engineering Improvements Made\n${(result.explanation || []).map(e => `- ${e}`).join('\n')}`,
+        metadata: {
+          "Model": selectedModel.toUpperCase(),
+          "Framework": selectedFramework.toUpperCase(),
+          "Clarity Score": `${result.metrics.clarityScore}%`,
+          "Yield Improvement": `+${result.metrics.improvement}%`
+        }
+      });
+      onNotify("Opened print & PDF export dialog!", "success");
+      return;
     } else {
       // Markdown
       content = `# Master Prompt Studio Export\n\n## Metadata\n- **Target Model:** ${selectedModel.toUpperCase()}\n- **Framework:** ${selectedFramework.toUpperCase()}\n- **Date:** ${new Date().toLocaleDateString()}\n\n## Original Prompt:\n\`\`\`\n${rawPrompt}\n\`\`\`\n\n## Optimized High-Yield Prompt:\n\`\`\`\n${result.optimized}\n\`\`\`\n\n## Performance Metrics:\n- **Clarity Score:** ${result.metrics.clarityScore}%\n- **Before Tokens:** ${result.metrics.tokensBefore}\n- **After Tokens:** ${result.metrics.tokensAfter}\n- **Improvement:** +${result.metrics.improvement}%\n\n---\n*Generated by Master Prompt Studio*`;

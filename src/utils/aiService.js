@@ -1,4 +1,5 @@
 import { optimizePromptLocally } from './promptEngine';
+import { generateFactoryArtifact } from './factoryEngine';
 
 // Groq Cloud API configuration
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
@@ -164,3 +165,93 @@ CRITICAL RULES:
     };
   }
 }
+
+/**
+ * Live AI Content Factory Generator:
+ * Uses Groq Cloud API (Llama 3.3 70B) to generate comprehensive publication-ready drafts
+ * for any of the 30 Content Factory modes, with instant offline template fallback.
+ */
+export async function generateFactoryArtifactLive(mode, intakeData = {}) {
+  const apiKey = getActiveGroqKey();
+
+  if (!apiKey) {
+    const local = generateFactoryArtifact(mode, intakeData);
+    return {
+      content: local,
+      isLiveAi: false,
+      engine: 'Deterministic Factory Engine'
+    };
+  }
+
+  const {
+    title = mode.defaultTitle,
+    audience = mode.defaultAudience,
+    theme = mode.defaultTheme,
+    format = 'Full Document',
+    additionalNotes = ''
+  } = intakeData;
+
+  const systemPrompt = `You are a World-Class Digital Publisher, Author, and Content Architect for Master Prompt Studio.
+Your mission is to generate a comprehensive, publication-grade digital asset for the following mode:
+Mode Name: ${mode.name} (${mode.command})
+Category: ${mode.category}
+Deliverable Format: ${format}
+
+INSTRUCTIONS:
+1. Output a rich, high-density, production-ready document in structured Markdown.
+2. Include realistic chapters, code snippets, execution frameworks, or stage directions appropriate for this asset type.
+3. Tailor the tone and content directly to the target audience: "${audience}".
+4. Anchor the central thesis around: "${theme}".
+5. Do not output meta explanations like "Here is your document". Begin immediately with the title (# Title) and document body.`;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 18000); // 18s timeout
+
+    const response = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: `Please generate the full asset for: "${title}". Additional notes: ${additionalNotes || 'Ensure top executive quality.'}` }
+        ],
+        temperature: 0.7,
+        max_tokens: 2500
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Groq API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const outputContent = data.choices?.[0]?.message?.content || '';
+
+    if (!outputContent.trim()) {
+      throw new Error('Empty completion from Groq');
+    }
+
+    return {
+      content: outputContent,
+      isLiveAi: true,
+      engine: 'Groq Live AI (Llama 3.3 70B)'
+    };
+  } catch (error) {
+    console.warn('[Factory AI] Falling back to offline template:', error.message);
+    const local = generateFactoryArtifact(mode, intakeData);
+    return {
+      content: local,
+      isLiveAi: false,
+      engine: 'Deterministic Factory Engine (Offline Fallback)'
+    };
+  }
+}
+
