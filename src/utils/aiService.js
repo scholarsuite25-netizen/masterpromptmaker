@@ -4,13 +4,13 @@ import { optimizePromptLocally } from './promptEngine';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 export function isGroqConfigured() {
-  const envKey = import.meta.env.VITE_GROQ_API_KEY;
+  const envKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.GROK_API_KEY || import.meta.env.VITE_GROK_API_KEY;
   const localKey = typeof window !== 'undefined' ? localStorage.getItem('masterprompt_groq_key') : null;
   return Boolean((envKey && envKey.startsWith('gsk_')) || (localKey && localKey.startsWith('gsk_')));
 }
 
 export function getActiveGroqKey() {
-  const envKey = import.meta.env.VITE_GROQ_API_KEY;
+  const envKey = import.meta.env.VITE_GROQ_API_KEY || import.meta.env.GROK_API_KEY || import.meta.env.VITE_GROK_API_KEY;
   const localKey = typeof window !== 'undefined' ? localStorage.getItem('masterprompt_groq_key') : null;
   return localKey || envKey || '';
 }

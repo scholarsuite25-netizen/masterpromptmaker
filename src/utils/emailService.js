@@ -4,8 +4,16 @@
 const RESEND_API_URL = 'https://api.resend.com/emails';
 
 export function isResendConfigured() {
-  const envKey = import.meta.env.VITE_RESEND_API_KEY;
+  const envKey = import.meta.env.VITE_RESEND_API_KEY || import.meta.env.RESEND_API_KEY;
   return Boolean(envKey && envKey.startsWith('re_'));
+}
+
+export function getResendApiKey() {
+  return import.meta.env.VITE_RESEND_API_KEY || import.meta.env.RESEND_API_KEY || '';
+}
+
+export function getFromEmail() {
+  return import.meta.env.VITE_EMAIL_FROM || import.meta.env.EMAIL_FROM || 'onboarding@resend.dev';
 }
 
 /**
@@ -22,7 +30,7 @@ export async function sendOrderReceiptEmail({
   currency = 'NGN'
 }) {
   const formattedTotal = currency === 'NGN' ? `₦${totalNGN.toLocaleString()}` : `$${totalUSD.toFixed(2)}`;
-  const apiKey = import.meta.env.VITE_RESEND_API_KEY;
+  const apiKey = getResendApiKey();
 
   const htmlBody = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; background: #0b0f19; color: #f1f5f9; padding: 32px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
@@ -73,7 +81,7 @@ export async function sendOrderReceiptEmail({
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        from: 'Master Prompt Studio <orders@masterpromptstudio.com>',
+        from: `Master Prompt Studio <${getFromEmail()}>`,
         to: [customerEmail],
         subject: `Your Unlock Code: #${orderRef} - Master Prompt Studio`,
         html: htmlBody
@@ -97,7 +105,7 @@ export async function sendOrderReceiptEmail({
  * Dispatch Keynote Speaking inquiry to Samuel Omotoso & confirmation to client
  */
 export async function sendSpeakerInquiryEmail(inquiry) {
-  const apiKey = import.meta.env.VITE_RESEND_API_KEY;
+  const apiKey = getResendApiKey();
 
   if (!isResendConfigured()) {
     console.log('[EmailService (Simulation)] Keynote inquiry recorded:', inquiry);
@@ -112,7 +120,7 @@ export async function sendSpeakerInquiryEmail(inquiry) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        from: 'Master Prompt Studio <inquiries@masterpromptstudio.com>',
+        from: `Master Prompt Studio <${getFromEmail()}>`,
         to: ['samuelomotoso@gmail.com'],
         reply_to: inquiry.email,
         subject: `🎙️ New Keynote Speaking Request: ${inquiry.organization || inquiry.name}`,

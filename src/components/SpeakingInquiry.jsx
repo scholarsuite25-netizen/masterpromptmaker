@@ -17,6 +17,7 @@ export function SpeakingInquiry({ onNotify }) {
   const [location, setLocation] = useState("");
   const [audienceSize, setAudienceSize] = useState("");
   const [themeContext, setThemeContext] = useState("");
+  const [honeypot, setHoneypot] = useState("");
 
   const [submitted, setSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
@@ -25,6 +26,9 @@ export function SpeakingInquiry({ onNotify }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Anti-spam honeypot check
+    if (honeypot) return;
 
     if (!fullName.trim() || !organization.trim() || !email.trim()) {
       onNotify("Please fill in your Name, Organization, and Email!", "red");
@@ -205,6 +209,17 @@ export function SpeakingInquiry({ onNotify }) {
 
         {!submitted ? (
           <form onSubmit={handleSubmit} className="form-vertical-mobile">
+            {/* Hidden Spam Honeypot Field */}
+            <input
+              type="text"
+              name="company_fax_honeypot"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              style={{ display: 'none' }}
+              tabIndex="-1"
+              autoComplete="off"
+            />
+
             {/* Row 1: Full Name & Organization */}
             <div className="form-row-mobile">
               <div>

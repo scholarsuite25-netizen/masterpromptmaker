@@ -1,17 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { PromptWorkbench } from './components/PromptWorkbench';
-import { TemplatesGallery } from './components/TemplatesGallery';
-import { DigitalShop } from './components/DigitalShop';
-import { PromptLibrary } from './components/PromptLibrary';
-import { ContentFactoryStudio } from './components/ContentFactoryStudio';
-import { SpeakingInquiry } from './components/SpeakingInquiry';
-import { CartDrawer } from './components/CartDrawer';
-import { CheckoutModal } from './components/CheckoutModal';
-import { ProductPreviewModal } from './components/ProductPreviewModal';
 import { Footer } from './components/Footer';
 import { CheckCircle2, AlertCircle, Info, MessageCircle, HelpCircle } from 'lucide-react';
+
+// Code-split heavy below-the-fold modules & modals for instant initial load
+const TemplatesGallery = lazy(() => import('./components/TemplatesGallery').then(m => ({ default: m.TemplatesGallery })));
+const ContentFactoryStudio = lazy(() => import('./components/ContentFactoryStudio').then(m => ({ default: m.ContentFactoryStudio })));
+const DigitalShop = lazy(() => import('./components/DigitalShop').then(m => ({ default: m.DigitalShop })));
+const SpeakingInquiry = lazy(() => import('./components/SpeakingInquiry').then(m => ({ default: m.SpeakingInquiry })));
+const PromptLibrary = lazy(() => import('./components/PromptLibrary').then(m => ({ default: m.PromptLibrary })));
+const CartDrawer = lazy(() => import('./components/CartDrawer').then(m => ({ default: m.CartDrawer })));
+const CheckoutModal = lazy(() => import('./components/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
+const ProductPreviewModal = lazy(() => import('./components/ProductPreviewModal').then(m => ({ default: m.ProductPreviewModal })));
+
+function SectionFallback() {
+  return (
+    <div style={{
+      padding: '40px 20px',
+      textAlign: 'center',
+      color: 'var(--text-muted)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '10px'
+    }}>
+      <div style={{
+        width: '18px',
+        height: '18px',
+        border: '2px solid var(--border-subtle)',
+        borderTopColor: 'var(--blue-light)',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+      }} />
+      <span style={{ fontSize: '0.85rem' }}>Loading module...</span>
+    </div>
+  );
+}
 
 export function App() {
   const [activeTab, setActiveTab] = useState('optimizer');
@@ -272,6 +298,7 @@ Output: Under 90 words per email, no pleasantry fluff.`
         openCart={() => setIsCartOpen(true)}
         theme={theme}
         toggleTheme={toggleTheme}
+        onNotify={notify}
       />
 
       {/* Main Content Area */}
@@ -284,46 +311,49 @@ Output: Under 90 words per email, no pleasantry fluff.`
           onOpenSpeaking={() => scrollToSection('speaking-inquiry', 'speaking')}
         />
 
-        {/* 1. AI Prompt Engineering Workbench */}
+        {/* 1. AI Prompt Engineering Workbench (Immediate First-Paint) */}
         <PromptWorkbench
           onSavePrompt={handleSavePrompt}
           onNotify={notify}
         />
 
-        {/* 2. Autonomous 30-Mode Digital Content Factory */}
-        <ContentFactoryStudio
-          onNotify={notify}
-        />
+        {/* 2. Below-the-fold modules loaded with Suspense for ultra-fast startup */}
+        <Suspense fallback={<SectionFallback />}>
+          {/* Autonomous 30-Mode Digital Content Factory */}
+          <ContentFactoryStudio
+            onNotify={notify}
+          />
 
-        {/* 3. Prompt Templates Gallery */}
-        <TemplatesGallery
-          onSelectTemplate={handleSelectTemplate}
-          onNotify={notify}
-        />
+          {/* Prompt Templates Gallery */}
+          <TemplatesGallery
+            onSelectTemplate={handleSelectTemplate}
+            onNotify={notify}
+          />
 
-        {/* 4. Digital Creator Shop & Marketplace */}
-        <DigitalShop
-          onAddToCart={handleAddToCart}
-          onOpenPreview={(product) => setPreviewProduct(product)}
-          onDirectBuy={handleDirectBuy}
-          currency={currency}
-          setCurrency={setCurrency}
-          onNotify={notify}
-        />
+          {/* Digital Creator Shop & Marketplace */}
+          <DigitalShop
+            onAddToCart={handleAddToCart}
+            onOpenPreview={(product) => setPreviewProduct(product)}
+            onDirectBuy={handleDirectBuy}
+            currency={currency}
+            setCurrency={setCurrency}
+            onNotify={notify}
+          />
 
-        {/* 5. Keynote Speaking & Executive Workshop Inquiry */}
-        <SpeakingInquiry
-          onNotify={notify}
-        />
+          {/* Keynote Speaking & Executive Workshop Inquiry */}
+          <SpeakingInquiry
+            onNotify={notify}
+          />
 
-        {/* 6. Saved Prompts & Unlocked Digital Library */}
-        <PromptLibrary
-          savedPrompts={savedPrompts}
-          unlockedProducts={unlockedProducts}
-          onDeletePrompt={handleDeletePrompt}
-          onMergePrompts={handleMergePrompts}
-          onNotify={notify}
-        />
+          {/* Saved Prompts & Unlocked Digital Library */}
+          <PromptLibrary
+            savedPrompts={savedPrompts}
+            unlockedProducts={unlockedProducts}
+            onDeletePrompt={handleDeletePrompt}
+            onMergePrompts={handleMergePrompts}
+            onNotify={notify}
+          />
+        </Suspense>
       </main>
 
       {/* Floating 24/7 WhatsApp Quick Help & Feedback Widget (Bottom Left) */}
@@ -363,43 +393,45 @@ Output: Under 90 words per email, no pleasantry fluff.`
         </a>
       </aside>
 
-      {/* Modals & Slide-out Drawers */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cart}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        onProceedCheckout={handleProceedCartCheckout}
-        currency={currency}
-        setCurrency={setCurrency}
-      />
-
-      {isCheckoutOpen && (
-        <CheckoutModal
-          items={checkoutItems}
+      {/* Modals & Slide-out Drawers (Lazy Loaded with Suspense) */}
+      <Suspense fallback={null}>
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cart}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemoveItem={handleRemoveItem}
+          onClearCart={handleClearCart}
+          onProceedCheckout={handleProceedCartCheckout}
           currency={currency}
-          onClose={() => setIsCheckoutOpen(false)}
-          onClearCart={() => {
-            setCart([]);
-            setIsCheckoutOpen(false);
-          }}
-          onUnlockSuccess={handleUnlockOrder}
-          onNotify={notify}
+          setCurrency={setCurrency}
         />
-      )}
 
-      {previewProduct && (
-        <ProductPreviewModal
-          product={previewProduct}
-          currency={currency}
-          onClose={() => setPreviewProduct(null)}
-          onAddToCart={handleAddToCart}
-          onBuyWhatsApp={handleDirectBuy}
-          onNotify={notify}
-        />
-      )}
+        {isCheckoutOpen && (
+          <CheckoutModal
+            items={checkoutItems}
+            currency={currency}
+            onClose={() => setIsCheckoutOpen(false)}
+            onClearCart={() => {
+              setCart([]);
+              setIsCheckoutOpen(false);
+            }}
+            onUnlockSuccess={handleUnlockOrder}
+            onNotify={notify}
+          />
+        )}
+
+        {previewProduct && (
+          <ProductPreviewModal
+            product={previewProduct}
+            currency={currency}
+            onClose={() => setPreviewProduct(null)}
+            onAddToCart={handleAddToCart}
+            onBuyWhatsApp={handleDirectBuy}
+            onNotify={notify}
+          />
+        )}
+      </Suspense>
 
       {/* Toast Notification Container */}
       <div className="toast-container">

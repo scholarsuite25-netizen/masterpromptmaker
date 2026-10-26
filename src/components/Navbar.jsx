@@ -1,11 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, ShoppingBag, BookOpen, Bookmark, Sun, Moon, 
-  MessageSquare, Zap, SlidersHorizontal, Mic, Menu, X, ArrowRight 
+  MessageSquare, Zap, SlidersHorizontal, Mic, Menu, X, ArrowRight, User, LogIn 
 } from 'lucide-react';
+import { supabase, isSupabaseConfigured } from '../utils/supabase';
+import { AuthModal } from './AuthModal';
 
-export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme }) {
+export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, toggleTheme, onNotify }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    if (supabase) {
+      supabase.auth.getUser().then(({ data }) => {
+        if (data?.user) setUser(data.user);
+      }).catch(() => {});
+
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user || null);
+      });
+
+      return () => {
+        authListener?.subscription?.unsubscribe();
+      };
+    }
+  }, []);
 
   const scrollTo = (targetId, tab) => {
     if (setActiveTab) setActiveTab(tab);
@@ -199,6 +219,28 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
             )}
           </button>
 
+          {/* Account / Cloud Auth Button */}
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="btn btn-secondary"
+            style={{
+              padding: '8px 12px',
+              borderRadius: 'var(--radius-full)',
+              border: `1px solid ${user ? 'rgba(16, 185, 129, 0.4)' : 'var(--border-subtle)'}`,
+              background: user ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-surface-elevated)',
+              color: user ? '#34d399' : 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            title={user ? `Signed in as ${user.email}` : "Sign In to sync cloud account"}
+          >
+            <User size={15} color={user ? '#34d399' : 'var(--blue-light)'} />
+            <span className="hide-on-mobile" style={{ fontSize: '0.8rem', fontWeight: 600 }}>
+              {user ? (user.email ? user.email.split('@')[0] : 'Account') : 'Sign In'}
+            </span>
+          </button>
+
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -293,6 +335,14 @@ export function Navbar({ activeTab, setActiveTab, cartCount, openCart, theme, to
           </a>
         </div>
       )}
+
+      {/* Cloud Authentication Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        user={user}
+        onNotify={onNotify}
+      />
     </header>
   );
 }

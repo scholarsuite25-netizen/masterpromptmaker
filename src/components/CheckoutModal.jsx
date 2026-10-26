@@ -18,6 +18,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [honeypot, setHoneypot] = useState("");
 
   // Verification State
   const [unlockCodeInput, setUnlockCodeInput] = useState("");
@@ -44,6 +45,7 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
   };
 
   const handleLaunchWhatsApp = async () => {
+    if (honeypot) return;
     setEmailError("");
     if (!customerEmail.trim() || !customerEmail.includes('@')) {
       setEmailError("Please enter your email address so we can send your digital receipt and download tokens.");
@@ -262,6 +264,15 @@ export function CheckoutModal({ items, currency, onClose, onClearCart, onUnlockS
               </label>
 
               <div className="form-row-mobile" style={{ gap: '10px' }}>
+                <input
+                  type="text"
+                  name="user_organization_fax"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  style={{ display: 'none' }}
+                  tabIndex="-1"
+                  autoComplete="off"
+                />
                 <input
                   type="email"
                   placeholder="your-email@example.com (To receive unlock receipt)"
